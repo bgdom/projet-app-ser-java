@@ -1,16 +1,17 @@
 
-public class Livre implements Document
-{
-private int numero;
-private String titre;
-private Abonne reserveur;
-private Abonne emprunteur;
-public Livre(int numero,String titre){
-	this.numero = numero;
-	this.titre = titre;
-	emprunteur = null;
-	reserveur = null;
-}
+public class Livre implements Document {
+	private int numero;
+	private String titre;
+	private Abonne reserveur;
+	private Abonne emprunteur;
+
+	public Livre(int numero, String titre) {
+		this.numero = numero;
+		this.titre = titre;
+		emprunteur = null;
+		reserveur = null;
+	}
+
 	@Override
 	public int numero() {
 		return numero;
@@ -18,31 +19,32 @@ public Livre(int numero,String titre){
 
 	@Override
 	public void reserver(Abonne ab) throws PasLibreException {
-		if(reserveur != null)
+		if (reserveur != null)
 			throw new PasLibreException();
-		
+
 		this.reserveur = ab;
-		
-			}
+
+	}
 
 	@Override
 	public void emprunter(Abonne ab) throws PasLibreException {
-		if(reserveur != null){
-			if(reserveur.equals(ab)){
-				
+		if (reserveur != null) {
+			if (reserveur.equals(ab)) {
+				emprunteur = ab;
+			} else {
+				throw new PasLibreException();
 			}
-			
+
 		}
-			
-		
-			
-		
+
 	}
 
 	@Override
 	public void retour() {
-		// TODO Auto-generated method stub
-		
-	}
+		if (reserveur !=null && emprunteur !=null){
+			reserveur = null;
+			emprunteur = null;
+		}
+		}
 
 }
