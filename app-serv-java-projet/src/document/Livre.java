@@ -1,3 +1,7 @@
+package document;
+import blibliotheque.Abonne;
+import blibliotheque.Document;
+import blibliotheque.PasLibreException;
 
 public class Livre implements Document
 {
