@@ -9,7 +9,7 @@ public class Livre implements Document {
 	private Abonne reserveur;
 	private Abonne emprunteur;
 
-	public Livre(int numero, String titre) {
+	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
 		emprunteur = null;
