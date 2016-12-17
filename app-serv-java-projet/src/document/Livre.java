@@ -1,3 +1,7 @@
+package document;
+import blibliotheque.Abonne;
+import blibliotheque.Document;
+import blibliotheque.PasLibreException;
 
 public class Livre implements Document {
 	private int numero;
@@ -5,7 +9,7 @@ public class Livre implements Document {
 	private Abonne reserveur;
 	private Abonne emprunteur;
 
-	public Livre(int numero, String titre) {
+	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
 		emprunteur = null;

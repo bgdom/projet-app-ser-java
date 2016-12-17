@@ -1,3 +1,4 @@
+package blibliotheque;
 
 public interface Document {
 
