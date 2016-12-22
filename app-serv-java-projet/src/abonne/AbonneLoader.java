@@ -36,10 +36,10 @@ public class AbonneLoader implements AbonneFactory{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for(Abonne a : liste)	{
+		/*for(Abonne a : liste)	{
 		System.out.println(	a.getNom() + " "+ a.getId()); 
 		
-		}
+		}*/
 		return liste;
 		
 	}

@@ -16,6 +16,10 @@ public class Abonne {
 	public int getId() {
 		return id;
 	}
+	public String getPrenom() {
+		// TODO Auto-generated method stub
+		return prenom;
+	}
 	
 	
 }

@@ -33,10 +33,10 @@ public class DocumentLoader implements DocumentFactory{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for(Document a : liste)	{
+		/*for(Document a : liste)	{
 			System.out.println(	a.getTitre() + " "+ a.getNumero()); 
 			
-			}
+			}*/
 		return liste;
 	}
 	
