@@ -1,8 +1,5 @@
-/Abonne.class
-/Document.class
-/Livre.class
-/PasLibreException.class
-
 /appli/
 /blibliotheque/
+/Abonne/
+/abonne/
 /document/

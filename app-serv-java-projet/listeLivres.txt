@@ -1,3 +1,6 @@
 1;Le tour du monde en 80 jours
 2;L'étranger
 3;Tintin au congo
+4;Harry Potter 
+5;L'etranger
+6;l'avare
