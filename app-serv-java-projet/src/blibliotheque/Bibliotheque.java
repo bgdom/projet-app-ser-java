@@ -1,17 +1,19 @@
 package blibliotheque;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Bibliotheque {
-	private ArrayList<Document> documents;
+	private List<Document> documents;
+	private ArrayList<Abonne> abones;
 	
-	public Bibliotheque(){
+	public void start(DocumentFactory factory){
+		documents = factory.getDocumentFromFile("listeLivres.txt");
+		System.out.println(documents);
 		
 	}
 	
-	public void start(){
-		
+	private ArrayList<Abonne> getAbonnesFromFile(String fileName){
+		return null;
 	}
-	
-	
 }

@@ -49,6 +49,10 @@ public class Livre implements Document {
 			reserveur = null;
 			emprunteur = null;
 		}
-		}
-
+	}
+	
+	@Override
+	public String toString(){
+		return titre;
+	}
 }
