@@ -1,5 +1,5 @@
 package document;
-import blibliotheque.Abonne;
+import abonne.Abonne;
 import blibliotheque.Document;
 import blibliotheque.PasLibreException;
 
@@ -50,9 +50,21 @@ public class Livre implements Document {
 			emprunteur = null;
 		}
 	}
+
+	@Override
+	public String getTitre() {
+		// TODO Auto-generated method stub
+		return titre;
+	}
+
+	@Override
+	public int getNumero() {
+		// TODO Auto-generated method stub
+		return numero;
+	}
 	
 	@Override
 	public String toString(){
-		return titre;
+		return getTitre() +" " + getNumero() ;
 	}
 }

@@ -8,13 +8,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import abonne.Abonne;
 import blibliotheque.Document;
 import blibliotheque.DocumentFactory;
 
 public class DocumentLoader implements DocumentFactory{
 
 	@Override
-	public List<Document> getDocumentFromFile(String fileName) {
+	public ArrayList<Document> getDocumentFromFile(String fileName) {
 		ArrayList<Document> liste = new ArrayList<Document>();
 		try {
 			BufferedReader buff = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
@@ -32,6 +33,10 @@ public class DocumentLoader implements DocumentFactory{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		/*for(Document a : liste)	{
+			System.out.println(	a.getTitre() + " "+ a.getNumero()); 
+			
+			}*/
 		return liste;
 	}
 	
