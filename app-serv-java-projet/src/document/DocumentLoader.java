@@ -12,6 +12,11 @@ import abonne.Abonne;
 import blibliotheque.Document;
 import blibliotheque.DocumentFactory;
 
+/**
+ * represent an implementation of the DocumentFactory interface
+ * @author guydo
+ *
+ */
 public class DocumentLoader implements DocumentFactory{
 
 	@Override

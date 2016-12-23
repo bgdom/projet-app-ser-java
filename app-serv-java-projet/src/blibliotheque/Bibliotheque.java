@@ -2,17 +2,26 @@ package blibliotheque;
 
 import java.util.List;
 
+
 import abonne.Abonne;
 import service.ReservationServer;
-
+/**
+ * 
+ * @author guydo
+ * represent a Library that manage Retour, Emprunt et réservation 
+ */
 public class Bibliotheque {
 	private List<Document> documents;
 	private List<Abonne> abonnes;
 	
+	/**
+	 * constructor
+	 * @param dFactory factory to load documents
+	 * @param aFactory factory to load Users
+	 */
 	public void start(DocumentFactory dFactory, AbonneFactory aFactory){
 		documents = dFactory.getDocumentFromFile("listeLivres.txt");
 		abonnes = aFactory.getAbonneFromFile("listeAbonne.txt");
-		
 		
 		System.out.println(documents);
 		System.out.println(abonnes);
@@ -20,7 +29,11 @@ public class Bibliotheque {
 		run();
 	}
 	
-	
+	/**
+	 * retrieve a user by its id
+	 * @param id
+	 * @return a user
+	 */
 	private Abonne getAbonneById(int id) {
 		for (Abonne a : abonnes) {
 			if (id == a.getId()) {
@@ -29,7 +42,12 @@ public class Bibliotheque {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * retrieve a document by its id
+	 * @param id
+	 * @return a document
+	 */
 	private Document getDocumentById(int id) {
 		for (Document d : documents) {
 			if (id == d.getNumero()) {
@@ -39,6 +57,9 @@ public class Bibliotheque {
 		return null;
 	}
 
+	/**
+	 * launch services, workers, consumer and start processing
+	 */
 	private void run() {
 		OutputWorker output = new OutputWorker(); // to write data over sockets
 		new Thread(output).start();
