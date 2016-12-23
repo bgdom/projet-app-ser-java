@@ -1,15 +1,16 @@
 package blibliotheque;
-
-import java.io.BufferedReader;
+Z
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 
 public class OutputWorker implements Runnable {
 	private LinkedList<Data> liste;
 	
+	public OutputWorker(){
+		liste = new LinkedList<Data>();
+	}
 	public void add(Data d){
 		synchronized(liste){
 			liste.add(d);
