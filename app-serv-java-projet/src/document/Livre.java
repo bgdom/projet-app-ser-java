@@ -2,7 +2,11 @@ package document;
 import abonne.Abonne;
 import blibliotheque.Document;
 import blibliotheque.PasLibreException;
-
+/**
+ * 
+ * @author guydo
+ * represent a book
+ */
 public class Livre implements Document {
 	private int numero;
 	private String titre;
