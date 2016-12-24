@@ -36,21 +36,9 @@ class Application {
 				while(sin.ready()){
 					line +=sin.readLine()+"\n";
 					}
+				System.out.println("> " +line);
+				System.out.flush();		
 				
-				if(line.contains("erreur")){
-					System.err.println("> ERREUR RECOMMENCER\n" +line);
-					System.err.flush();	
-				}else if(line.contains("resaOk")){
-					line = line.replace("resaOk", "");
-					System.out.println("> " +line);
-					System.out.flush();	
-					break;
-				}
-				else{
-				
-					System.out.println("> " +line);
-					System.out.flush();	
-				}
 				l = getAction(line)+"\n"+clavier.readLine();
 				line="";
 				if (l.equals("")) break;
@@ -59,9 +47,8 @@ class Application {
 				
 			}
 		}
-		
 		catch (IOException e) {System.out.println("Connection fermee par le serveur");}
-		System.out.println("Aurevoir");
+		System.out.println("Bye");
 		// Refermer dans tous les cas la socket
 		try {
 if (s != null) s.close(); } 
@@ -73,9 +60,6 @@ if (s != null) s.close(); }
 	 */
 	private static String getAction(String line) {
 		// TODO Auto-generated method stub
-		if(line.contains("erreur")){
-			line =line.replace("erreur", "");
-		}
 		return line.substring(0,line.indexOf("\n"));
 	 
 	}

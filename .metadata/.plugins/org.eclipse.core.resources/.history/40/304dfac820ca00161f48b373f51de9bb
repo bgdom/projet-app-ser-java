@@ -44,7 +44,6 @@ class Application {
 					line = line.replace("resaOk", "");
 					System.out.println("> " +line);
 					System.out.flush();	
-					break;
 				}
 				else{
 				
@@ -61,7 +60,7 @@ class Application {
 		}
 		
 		catch (IOException e) {System.out.println("Connection fermee par le serveur");}
-		System.out.println("Aurevoir");
+		System.out.println("Bye");
 		// Refermer dans tous les cas la socket
 		try {
 if (s != null) s.close(); } 
