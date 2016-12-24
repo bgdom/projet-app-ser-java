@@ -1,6 +1,8 @@
 package service;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ public class ReservationServer implements ServiceServer {
 				System.out.println("Le server est en marche");
 				do{
 					Socket s = server.accept(); // accept connections
+					s.setSoTimeout(1);
 					input.add(new Data(s,null, this)); // put data on the inputworker
 					synchronized(map){
 						map.put(s, s); // put on the map
@@ -64,7 +67,7 @@ public class ReservationServer implements ServiceServer {
 	@Override
 	public boolean consume(Data data) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -73,14 +76,14 @@ public class ReservationServer implements ServiceServer {
 		synchronized(map){
 			if(map.get(s) != null){
 				map.remove(s);
+				try {
+					s.close();
+					System.out.println("Un nouveau client est déconnecté, il y en reste "+ map.size());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		}
-		try {
-			s.close();
-			System.out.println("Un nouveau client est déconnecté, il y en reste "+ map.size());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

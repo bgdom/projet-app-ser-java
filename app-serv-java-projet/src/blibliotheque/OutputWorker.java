@@ -3,6 +3,8 @@ package blibliotheque;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.PushbackReader;
 import java.util.LinkedList;
 
 /**
@@ -42,12 +44,11 @@ public class OutputWorker implements Runnable {
 				synchronized(liste){
 					if(liste.size() == 0) // if there is no data to output
 							liste.wait(); // wait until data is added
-					else
-						d = liste.remove(); // else remove and take it
+					d = liste.remove(); // else remove and take it
 				}
 				try {
-					BufferedWriter buff = new BufferedWriter(new OutputStreamWriter(d.getS().getOutputStream())); // to write data into the socket
-					buff.write(d.getMsg());
+					PrintWriter buff = new PrintWriter(d.getS().getOutputStream()); // to write data into the socket
+					buff.print(d.getMsg());
 					buff.flush();
 					System.out.println("Le server a envoyé une réponse");
 				} catch (IOException e) {

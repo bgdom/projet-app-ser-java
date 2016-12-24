@@ -42,9 +42,7 @@ public class DataConsumer implements Runnable {
 				synchronized(liste){
 					if(liste.size() == 0) // if there is no data to consume
 							liste.wait(); // wait until a data is insert by an other thread
-					else{
-						d = liste.remove(); // else remove it from the list take it
-					}
+					d = liste.remove(); // else remove it from the list take it
 				}
 				if(d.getC().consume(d)){ // process it
 					output.add(d); // if the processing was O.K, add the result onto the outputworker

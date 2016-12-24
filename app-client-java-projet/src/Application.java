@@ -27,8 +27,7 @@ class Application {
 			String line;
 			while(true) {
 				
-				System.out.print("> "); System.out.flush();
-				System.out.println(sin.readLine());
+				System.out.print("> ");
 				line = clavier.readLine();
 				if (line.equals("")) break;
 				// envoie au serveur
@@ -44,12 +43,14 @@ class Application {
 				// Ecrit la ligne envoyee par le serveur
 				System.out.println(line);
 			}
+			clavier.close();
+			sin.close();
+			sout.close();
+			if (s != null)
+				s.close();
+		}catch (IOException e) {
+			System.out.println("Connection fermee par le serveur");
 		}
-		catch (IOException e) {System.out.println("Connection fermee par le serveur");}
-		System.out.println("Bye");
-		// Refermer dans tous les cas la socket
-		try {
-if (s != null) s.close(); } 
-		catch (IOException e2) { ; }		
+		System.out.println("Bye");	
 	}
 }

@@ -19,7 +19,7 @@ public class Data {
 	 * @param c
 	 */
 	public Data(Socket s, String msg, ServiceServer c){
-		this.c = c;
+		this.s = s;
 		this.msg = msg;
 		this.c = c;
 	}
