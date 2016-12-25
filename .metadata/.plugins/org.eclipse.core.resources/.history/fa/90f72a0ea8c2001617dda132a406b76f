@@ -1,7 +1,0 @@
-
-public class PasLibreException extends Exception {
-
-	public PasLibreException(String g){
-		super(g);
-	}
-}

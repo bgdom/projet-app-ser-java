@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
+/**
+ * Classe client
+ * @author hassa
+ *
+ */
 class Application {
-		private final static int PORT = 2500;
+		private final static int PORT = 1000;
 		private final static String HOST = "localhost"; 
 	
 	public static void main(String[] args) {
@@ -24,33 +28,55 @@ class Application {
 			// Informe l'utilisateur de la connection
 			System.out.println("Connecté au serveur " + s.getInetAddress() + ":"+ s.getPort());
 			
-			String line;
+			String line = "";
+			String l;
 			while(true) {
 				
-				System.out.print("> ");
-				line = clavier.readLine();
-				if (line.equals("")) break;
-				// envoie au serveur
-				sout.println(line);
-				// lit la réponse provenant du serveur
-				line = sin.readLine();
-				// Verifie si la connection est fermee.
-				// Si oui on sort de la boucle
-				if (line == null) { 
-					System.out.println("Connection fermee"); 
+				
+				while(sin.ready()){
+					line +=sin.readLine()+"\n";
+					}
+				
+				if(line.contains("erreur")){
+					System.err.println("> ERREUR RECOMMENCER\n" +line);
+					System.err.flush();	
+				}else if(line.contains("resaOk")){
+					line = line.replace("resaOk", "");
+					System.out.println("> " +line);
+					System.out.flush();	
 					break;
 				}
-				// Ecrit la ligne envoyee par le serveur
-				System.out.println(line);
+				else{
+				
+					System.out.println("> " +line);
+					System.out.flush();	
+				}
+				l = getAction(line)+"\n"+clavier.readLine();
+				line="";
+				if (l.equals("")) break;
+				// envoie au serveur
+				sout.println(l);
+				
 			}
-			clavier.close();
-			sin.close();
-			sout.close();
-			if (s != null)
-				s.close();
-		}catch (IOException e) {
-			System.out.println("Connection fermee par le serveur");
 		}
-		System.out.println("Bye");	
+		
+		catch (IOException e) {System.out.println("Connection fermee par le serveur");}
+		System.out.println("Aurevoir");
+		// Refermer dans tous les cas la socket
+		try {
+if (s != null) s.close(); } 
+		catch (IOException e2) { ; }		
+	}
+
+	/**
+	 * Retourne une action contenu dans un message
+	 */
+	private static String getAction(String line) {
+		// TODO Auto-generated method stub
+		if(line.contains("erreur")){
+			line =line.replace("erreur", "");
+		}
+		return line.substring(0,line.indexOf("\n"));
+	 
 	}
 }
