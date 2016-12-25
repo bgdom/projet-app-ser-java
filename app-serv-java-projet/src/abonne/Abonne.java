@@ -1,11 +1,13 @@
 package abonne;
 
+import blibliotheque.Client;
+
 /**
  * 
  * @author guydo
  * represent a User registered
  */
-public class Abonne {
+public class Abonne implements Client{
 	private String nom;
 	private  String prenom;
 	private int id;

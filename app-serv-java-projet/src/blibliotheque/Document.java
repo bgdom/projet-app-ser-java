@@ -42,6 +42,12 @@ public interface Document {
 	
 	/**
 	 * 
+	 * @return if the document is free
+	 */
+	boolean isFree();
+	
+	/**
+	 * 
 	 * @return the Id of the document
 	 */
 	int getNumero();

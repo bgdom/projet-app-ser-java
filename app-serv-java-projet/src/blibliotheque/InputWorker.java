@@ -3,7 +3,6 @@ package blibliotheque;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
@@ -65,7 +64,7 @@ public class InputWorker implements Runnable {
 						if(!sb.toString().isEmpty()){
 							d.setMsg(sb.toString());
 							System.out.println(sb.toString());
-							consumer.add(d); // add to the consumer to process data					
+							consumer.add(new Data(d.getS(), sb.substring(0), d.getC())); // add to the consumer to process data					
 						}
 					}
 					

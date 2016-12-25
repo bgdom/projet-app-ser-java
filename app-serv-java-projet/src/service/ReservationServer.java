@@ -1,16 +1,19 @@
 package service;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
+import blibliotheque.Bibliotheque;
+import blibliotheque.Client;
 import blibliotheque.Data;
+import blibliotheque.Document;
 import blibliotheque.InputWorker;
+import blibliotheque.OutputWorker;
 import blibliotheque.ServiceServer;
 
 /**
@@ -24,17 +27,21 @@ public class ReservationServer implements ServiceServer {
 	private static final String IP = "127.0.0.1";
 	private ServerSocket server;
 	private InputWorker input; // to read data
-	private HashMap<Socket, Socket> map; // to store sockets
-	
+	private OutputWorker output;
+	private HashMap<Socket, Client> map; // to store sockets
+	private Bibliotheque bi;
+	private static final String AUTHENTIFICATION_ACTION = "authentification";
 	/**
 	 * contructor
 	 * @param in the inputworker which will listen for incomming data after a socket was accepted
 	 */
-	public ReservationServer(InputWorker in){
+	public ReservationServer(InputWorker in, OutputWorker out, Bibliotheque b){
 		try {
 			server = new ServerSocket(PORT);
 			input = in;
-			map = new HashMap<Socket,Socket>();
+			output = out;
+			this.bi = b;
+			map = new HashMap<Socket,Client>();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -51,9 +58,13 @@ public class ReservationServer implements ServiceServer {
 				do{
 					Socket s = server.accept(); // accept connections
 					s.setSoTimeout(1);
-					input.add(new Data(s,null, this)); // put data on the inputworker
+					Data d = new Data(s,null, this);
+					input.add(d); // put data on the inputworker
+					d.setMsg(AUTHENTIFICATION_ACTION + System.getProperty("line.separator") + "Vous êtes connecté(e) sur le serveur"
+					+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
+					output.add(d); // start the communication
 					synchronized(map){
-						map.put(s, s); // put on the map
+						map.put(s, null); // put on the map
 						System.out.println("Un nouveau client est accepté, il y en a "+ map.size());
 					}
 				}while(true);
@@ -67,9 +78,85 @@ public class ReservationServer implements ServiceServer {
 	@Override
 	public boolean consume(Data data) {
 		// TODO Auto-generated method stub
-		return true;
+		String[] array = data.getMsg().split(System.getProperty("line.separator"));
+		if(array.length >= 2){
+			StringBuilder sb = new StringBuilder();
+			for(int i = 1; i < array.length; ++i)
+				sb.append(array[i]);
+			return matchFunction2(array[0], sb.toString(), data);
+		}else
+			return matchFunction1(array[0], data);
 	}
 
+	private boolean matchFunction1(String a, Data d){
+		if(a.equals(AUTHENTIFICATION_ACTION)){
+			return authentificationAction(a,null,d);
+		}
+		return false;
+	}
+	
+	private boolean matchFunction2(String a, String b, Data d){
+		if(a.equals(AUTHENTIFICATION_ACTION)){
+			return authentificationAction(a,b,d);
+		}
+		return false;
+	}
+	
+	private boolean authentificationAction(String a, String b, Data d){
+		Client abo = null;
+		if(b != null){
+			try{
+				abo = bi.getAbonneById(Integer.valueOf(b));
+			}catch(NumberFormatException e){}
+			
+			if(abo == null){
+				d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
+						+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
+				return true;
+			}
+			else{
+				Client c = retrieveClient(d.getS());
+				StringBuilder sb = new StringBuilder();
+				if(c == null){
+					setClient(d.getS(), abo);
+					sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
+					sb.append("Vous êtes identifié(e)" + System.getProperty("line.separator"));
+					List<Document> l = bi.getDocumentsLibre();
+					if(l.size() != 0){
+						sb.append("Voici les documents libre (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
+						for(Document doc : l){
+							sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
+						}
+					}else
+						sb.append("Aucun document n'est libre" + System.getProperty("line.separator"));
+					d.setMsg(sb.toString());
+				}else{
+					d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
+							+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
+				}
+				return true;
+			}
+		}else{
+			d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
+					+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
+			return true;
+		}
+	}
+	
+	private Client retrieveClient(Socket key){
+		Client c  = null;
+		synchronized(map){
+			c = map.get(key);
+		}
+		return c;
+	}
+	
+	private void setClient(Socket key, Client c){
+		synchronized(map){
+			map.put(key, c);
+		}
+	}
+	
 	@Override
 	public void remove(Socket s){
 		// TODO Auto-generated method stub
@@ -102,10 +189,10 @@ public class ReservationServer implements ServiceServer {
 			}
 			
 			synchronized(map){
-				Iterator<Entry<Socket, Socket>> it = map.entrySet().iterator();
+				Iterator<Entry<Socket, Client>> it = map.entrySet().iterator();
 				while(it.hasNext()){
 					try {
-						it.next().getValue().close();
+						it.next().getKey().close();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

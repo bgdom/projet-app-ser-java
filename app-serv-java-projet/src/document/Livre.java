@@ -72,4 +72,10 @@ public class Livre implements Document {
 	public String toString(){
 		return getTitre() +" " + getNumero() ;
 	}
+
+	@Override
+	public boolean isFree() {
+		// TODO Auto-generated method stub
+		return (emprunteur != null && reserveur != null);
+	}
 }
