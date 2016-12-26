@@ -10,11 +10,11 @@ import java.net.Socket;
  *
  */
 class Application {
-		private final static int PORT = 1000;
-		private final static String HOST = "localhost"; 
+	private final static int PORT = 2500;
+	private final static String HOST = "localhost"; 
 	
 	public static void main(String[] args) {
-		Socket s = null;		
+		Socket s = null;	
 		try {
 			// Cree une socket pour communiquer avec le service se trouvant sur la
 			// machine host au port PORT
@@ -29,15 +29,20 @@ class Application {
 			System.out.println("Connecté au serveur " + s.getInetAddress() + ":"+ s.getPort());
 			
 			String line = "";
+			StringBuilder sb = new StringBuilder();
 			String l;
 			while(true) {
-				
-				
-				while(sin.ready()){
-					line +=sin.readLine()+"\n";
-					}
-				
-				if(line.contains("erreur")){
+				while((line = sin.readLine()) != null) {
+					sb.append(line);
+					if(!sin.ready())
+						break;
+					else
+						sb.append(System.getProperty("line.separator"));
+				}
+				if(line == null)
+					break;
+				line = sb.toString();
+				if(line.contains("Erreur")){
 					System.err.println("> ERREUR RECOMMENCER\n" +line);
 					System.err.flush();	
 				}else if(line.contains("resaOk")){
@@ -51,20 +56,29 @@ class Application {
 					System.out.println("> " +line);
 					System.out.flush();	
 				}
-				l = getAction(line)+"\n"+clavier.readLine();
+				l = clavier.readLine();
+				if(l.isEmpty())
+					break;
+				l = getAction(line)+System.getProperty("line.separator")+l;
 				line="";
+				sb.delete(0, sb.length());
 				if (l.equals("")) break;
 				// envoie au serveur
 				sout.println(l);
+				sout.flush();
 				
 			}
+			if(line == null)
+				System.out.println("Connection fermee par le serveur");
+				
+		} catch (IOException e){
+			System.out.println("Connection fermee par le serveur");
 		}
-		
-		catch (IOException e) {System.out.println("Connection fermee par le serveur");}
 		System.out.println("Aurevoir");
 		// Refermer dans tous les cas la socket
 		try {
-if (s != null) s.close(); } 
+			if (s != null) s.close();
+		} 
 		catch (IOException e2) { ; }		
 	}
 
@@ -73,10 +87,10 @@ if (s != null) s.close(); }
 	 */
 	private static String getAction(String line) {
 		// TODO Auto-generated method stub
-		if(line.contains("erreur")){
-			line =line.replace("erreur", "");
+		if(line.contains("Erreur")){
+			line =line.replace("Erreur", "");
 		}
-		return line.substring(0,line.indexOf("\n"));
+		return line.substring(0,line.indexOf(System.getProperty("line.separator")));
 	 
 	}
 }

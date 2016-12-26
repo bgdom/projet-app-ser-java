@@ -14,6 +14,7 @@ import blibliotheque.Data;
 import blibliotheque.Document;
 import blibliotheque.InputWorker;
 import blibliotheque.OutputWorker;
+import blibliotheque.PasLibreException;
 import blibliotheque.ServiceServer;
 
 /**
@@ -89,58 +90,99 @@ public class ReservationServer implements ServiceServer {
 	}
 
 	private boolean matchFunction1(String a, Data d){
-		if(a.equals(AUTHENTIFICATION_ACTION)){
-			return authentificationAction(a,null,d);
-		}
 		return false;
 	}
 	
 	private boolean matchFunction2(String a, String b, Data d){
-		if(a.equals(AUTHENTIFICATION_ACTION)){
+		if(a.startsWith(AUTHENTIFICATION_ACTION)){
 			return authentificationAction(a,b,d);
 		}
 		return false;
 	}
 	
 	private boolean authentificationAction(String a, String b, Data d){
-		Client abo = null;
-		if(b != null){
-			try{
-				abo = bi.getAbonneById(Integer.valueOf(b));
-			}catch(NumberFormatException e){}
-			
-			if(abo == null){
-				d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
-						+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
-				return true;
-			}
-			else{
-				Client c = retrieveClient(d.getS());
-				StringBuilder sb = new StringBuilder();
-				if(c == null){
-					setClient(d.getS(), abo);
-					sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
-					sb.append("Vous êtes identifié(e)" + System.getProperty("line.separator"));
-					List<Document> l = bi.getDocumentsLibre();
-					if(l.size() != 0){
-						sb.append("Voici les documents libre (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
-						for(Document doc : l){
-							sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
-						}
-					}else
-						sb.append("Aucun document n'est libre" + System.getProperty("line.separator"));
-					d.setMsg(sb.toString());
-				}else{
+		switch(a){
+			case AUTHENTIFICATION_ACTION: // to identifie user
+				Client abo = null;
+				try{
+					abo = bi.getAbonneById(Integer.valueOf(b)); // get a user by the Id gave
+				}catch(NumberFormatException e){}
+				if(abo == null){ // if there is no user
 					d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
 							+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
+				} else { // if there is a user
+					Client c = retrieveClient(d.getS());
+					StringBuilder sb = new StringBuilder();
+					sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
+					if(c == null){ // if the user is not already registered in the map
+						if(clientAlreadyMapped(abo)){
+							System.out.println("abo conflict co");
+							d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+
+									"Problème d'identité, vous êtes déconnecté, reconnectez vous avec votre Id"+ System.getProperty("line.separator")); 
+							return true;
+						}
+						System.out.println("new abo co");
+						setClient(d.getS(), abo); // registers it with his account
+						sb.append("Vous êtes identifié(e)" + System.getProperty("line.separator"));
+						authOkAction(sb);
+						d.setMsg(sb.toString());
+					}else{
+						System.out.println("abo already co");
+						authOkAction(sb);
+						d.setMsg(sb.toString());
+					}
 				}
 				return true;
+				
+			case AUTHENTIFICATION_ACTION+"Ok":
+				Document doc = null;
+				try{
+					doc = bi.getDocumentById(Integer.valueOf(b)); // get adocument by the Id gave
+				}catch(NumberFormatException e){}
+				StringBuilder sb = new StringBuilder();
+				if(doc == null){ // if it doesn't exist
+					sb.append(AUTHENTIFICATION_ACTION+"OkErreur" + System.getProperty("line.separator"));
+					sb.append("L'id ne correspond pas, entrez en un nouveau "+ System.getProperty("line.separator"));
+					authOkAction(sb);
+				} else {
+					try { // try to book the document
+						sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
+						doc.reserver(retrieveClient(d.getS()));
+						sb.append("Votre document est réservé, choisissez en d'autres si vous voulez"+ System.getProperty("line.separator"));
+						authOkAction(sb);
+					} catch (PasLibreException e) { // otherwise
+						sb.append("Ce document n'est pas libre, entrez en un nouveau"+ System.getProperty("line.separator"));
+						authOkAction(sb);
+					}
+				}
+				d.setMsg(sb.toString());
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	private void authOkAction(StringBuilder sb){
+		List<Document> l = bi.getDocumentsLibre();
+		if(l.size() != 0){
+			sb.append("Voici les documents libre (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
+			for(Document doc : l){
+				sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
 			}
 		}else{
-			d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
-					+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
-			return true;
+			sb.append("Aucun document n'est libre" + System.getProperty("line.separator"));
+			sb.append("Entrez à nouveau votre Id pour rafraichir" + System.getProperty("line.separator"));
 		}
+	}
+
+	private boolean clientAlreadyMapped(Client c){
+		synchronized(map){
+			for(Client cl : map.values()){
+				if(cl == c)
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	private Client retrieveClient(Socket key){
@@ -161,13 +203,14 @@ public class ReservationServer implements ServiceServer {
 	public void remove(Socket s){
 		// TODO Auto-generated method stub
 		synchronized(map){
-			if(map.get(s) != null){
+			if(map.containsKey(s)){
 				map.remove(s);
 				try {
 					s.close();
 					System.out.println("Un nouveau client est déconnecté, il y en reste "+ map.size());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					System.out.println("IOE during closing");
 					e.printStackTrace();
 				}
 			}

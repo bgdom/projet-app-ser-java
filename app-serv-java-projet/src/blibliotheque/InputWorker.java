@@ -46,7 +46,9 @@ public class InputWorker implements Runnable {
 			do{ // loop over the data list
 				synchronized(liste){
 					if(liste.size() == 0){ // if the list is empty 
+						System.out.println("input wainting");
 							liste.wait(); // wait that an other thread notify after an insert
+							System.out.println("input woked up");
 					}
 					d = liste.remove(); // get the first data
 					liste.add(liste.size(), d); // on the last position

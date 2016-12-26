@@ -20,14 +20,14 @@ public interface Document {
 	 * @param ab the suscriber
 	 * @throws PasLibreException if the Document is'nt free
 	 */
-	void reserver(Abonne ab) throws PasLibreException ;
+	void reserver(Client ab) throws PasLibreException ;
 	
 	/**
 	 * try to borrow a book for a subscriber
 	 * @param ab the suscriber
 	 * @throws PasLibreException if the Document is'nt free
 	 */
-	void emprunter(Abonne ab) throws PasLibreException;
+	void emprunter(Client ab) throws PasLibreException;
 	
 	/**
 	 * free the document
