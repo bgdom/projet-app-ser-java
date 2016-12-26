@@ -61,7 +61,7 @@ public class Client implements Runnable {
 
 			String line = "";
 			StringBuilder sb = new StringBuilder();
-			String l;
+			String l="";
 			while (true) {
 
 				while((line = sin.readLine()) != null) {
@@ -85,24 +85,18 @@ public class Client implements Runnable {
 					System.out.println("> " +line);
 					System.out.flush();	
 				}
-				l = clavier.readLine();
-				if(l.isEmpty())
-					break;
+
 				l = getAction(line)+System.getProperty("line.separator")+l;
 				// si il ya une activité de la part de l'utilisateur on
 				// reinitialise le timer
 				session.restart();
 
 				line = "";
-				sb.delete(0, sb.length());
 				if (l.equals(""))
 					break;
 				// envoie au serveur
 				sout.println(l);
-				sout.flush();
 
-				if(line == null)
-					System.out.println("Connection fermee par le serveur");
 			}
 		}
 
@@ -124,11 +118,11 @@ public class Client implements Runnable {
 	 */
 	private static String getAction(String line) {
 		// TODO Auto-generated method stub
-		if(line.contains("Erreur")){
-			line =line.replace("Erreur", "");
+		if (line.contains("erreur")) {
+			line = line.replace("erreur", "");
 		}
-		return line.substring(0,line.indexOf(System.getProperty("line.separator")));
-	 
+		return line.substring(0, line.indexOf("\n"));
+
 	}
 
 	/**

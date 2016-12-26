@@ -124,11 +124,11 @@ public class Client implements Runnable {
 	 */
 	private static String getAction(String line) {
 		// TODO Auto-generated method stub
-		if(line.contains("Erreur")){
-			line =line.replace("Erreur", "");
+		if (line.contains("erreur")) {
+			line = line.replace("erreur", "");
 		}
-		return line.substring(0,line.indexOf(System.getProperty("line.separator")));
-	 
+		return line.substring(0, line.indexOf("\n"));
+
 	}
 
 	/**
