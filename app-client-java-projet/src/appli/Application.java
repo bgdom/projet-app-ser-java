@@ -20,7 +20,7 @@ class Application {
 	public static void main(String[] args) throws UnknownHostException, IOException {
 	
 		Client c1 = new Client(HOST,PORT);
-		
+	
 	}
 
 	

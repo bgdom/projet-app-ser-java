@@ -18,7 +18,7 @@ public class Livre implements Document {
 	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
-		emprunteur = null;
+		emprunteur =null /*new Abonne("Thameur","Hassan",1)*/;
 		reserveur = null;
 	}
 
@@ -50,11 +50,13 @@ public class Livre implements Document {
 	}
 
 	@Override
-	public void retour() {
-		if (reserveur !=null && emprunteur !=null){
+	public boolean retour() {
+		if (reserveur !=null || emprunteur !=null){
 			reserveur = null;
 			emprunteur = null;
+			return true;
 		}
+		return false;
 	}
 
 	@Override
@@ -78,5 +80,11 @@ public class Livre implements Document {
 	public boolean isFree() {
 		// TODO Auto-generated method stub
 		return (emprunteur == null && reserveur == null);
+	}
+
+	@Override
+	public Client getEmprunteur() {
+		// TODO Auto-generated method stub
+		return reserveur;
 	}
 }

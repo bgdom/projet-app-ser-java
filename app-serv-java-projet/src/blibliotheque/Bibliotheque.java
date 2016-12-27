@@ -6,6 +6,7 @@ import java.util.List;
 
 import abonne.Abonne;
 import service.ReservationServer;
+import service.RetourServer;
 /**
  * 
  * @author guydo
@@ -80,8 +81,19 @@ public class Bibliotheque {
 		InputWorker input = new InputWorker(dataConsumer); // to read data over sockets
 		new Thread(input).start();
 		
-		
 		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
+		///********
+		OutputWorker o = new OutputWorker(); // to write data over sockets
+		new Thread(o).start();
+		
+		DataConsumer d = new DataConsumer(o); // to consume data that socket inputed
+		new Thread(d).start();
+		
+		InputWorker i = new InputWorker(d); // to read data over sockets
+		new Thread(i).start();
+		
+	
+		new Thread(new RetourServer(i, o, this)).start(); // Retour service 
 	}
 
 }

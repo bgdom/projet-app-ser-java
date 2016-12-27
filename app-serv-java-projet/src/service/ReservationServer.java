@@ -55,7 +55,7 @@ public class ReservationServer implements ServiceServer {
 	public void run() {
 		if(server != null){// if there was no IOEception, we can start to work
 			try {
-				System.out.println("Le server est en marche");
+				System.out.println("Le server RESERVATION est en marche");
 				do{
 					Socket s = server.accept(); // accept connections
 					s.setSoTimeout(1);
