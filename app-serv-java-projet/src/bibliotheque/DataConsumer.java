@@ -1,4 +1,4 @@
-package blibliotheque;
+package bibliotheque;
 
 import java.util.LinkedList;
 
@@ -41,9 +41,9 @@ public class DataConsumer implements Runnable {
 			do{
 				synchronized(liste){
 					if(liste.size() == 0){ // if there is no data to consume
-						System.out.println("consumer wainting");
+						//System.out.println("consumer wainting");
 							liste.wait(); // wait until a data is insert by an other thread
-							System.out.println("consumer woked up");
+							//System.out.println("consumer woked up");
 					}
 					d = liste.remove(); // else remove it from the list take it
 				}

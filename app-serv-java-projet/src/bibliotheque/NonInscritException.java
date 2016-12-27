@@ -1,4 +1,4 @@
-package blibliotheque;
+package bibliotheque;
 
 /**
  * represent an exception which is thrown when an identification failed
@@ -8,6 +8,6 @@ package blibliotheque;
 public class NonInscritException extends Exception {
 
 	public NonInscritException() {
-		super("Nous n'avons pas reconnu votre identifiant, veuillez ressaisir vos informations.");
+		super("Nous n'avons pas reconnu cet identifiant, veuillez ressaisir vos informations.");
 	}
 }

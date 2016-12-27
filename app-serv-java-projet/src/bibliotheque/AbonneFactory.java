@@ -1,4 +1,4 @@
-package blibliotheque;
+package bibliotheque;
 
 import java.util.List;
 

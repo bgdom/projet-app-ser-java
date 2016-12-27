@@ -1,4 +1,4 @@
-package blibliotheque;
+package bibliotheque;
 
 /**
  * represent an exception thrown when a suscriber try to borrow or reserve a book borrowed

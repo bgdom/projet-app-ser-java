@@ -1,10 +1,12 @@
-package blibliotheque;
+package bibliotheque;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Scanner;
 
 import abonne.Abonne;
+import service.EmpruntClient;
+import service.EmpruntServer;
 import service.ReservationServer;
 /**
  * 
@@ -35,13 +37,13 @@ public class Bibliotheque {
 	 * @param id
 	 * @return a user
 	 */
-	public Client getAbonneById(int id) {
+	public Client getAbonneById(int id) throws NonInscritException{
 		for (Client a : abonnes) {
 			if (id == a.getId()) {
 				return a;
 			}
 		}
-		return null;
+		throw new NonInscritException();
 	}
 	
 	public List<Document> getDocumentsLibre(){
@@ -58,13 +60,13 @@ public class Bibliotheque {
 	 * @param id
 	 * @return a document
 	 */
-	public Document getDocumentById(int id) {
+	public Document getDocumentById(int id) throws NonInscritException {
 		for (Document d : documents) {
 			if (id == d.getNumero()) {
 				return d;
 			}
 		}
-		return null;
+		throw new NonInscritException();
 	}
 
 	/**
@@ -82,6 +84,40 @@ public class Bibliotheque {
 		
 		
 		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
+		new Thread(new EmpruntServer(input, output, this)).start();
+		
+		boolean again = true;
+		do{
+			System.out.println("Que voulez vous lancez : "+System.getProperty("line.separator")+
+					"1. emprunt"+System.getProperty("line.separator")+ "2. réservation"
+					+System.getProperty("line.separator")+"3. Tout arreter");
+			Scanner in = new Scanner(System.in);
+			String line = "";
+			boolean again2 = true;
+			int code = 0;
+			while(again2){
+				line = in.nextLine();
+				try{
+					code = Integer.valueOf(line);
+					if(code > 0 && code <= 3)
+						again2 = false;
+					else
+						System.out.println("Votre saisie n'est pas bonnne, recommencez");
+				} catch(NumberFormatException e){
+					System.out.println("Votre saisie n'est pas bonnne, recommencez");
+				}
+			}
+			switch(code){
+			case 1:
+				new EmpruntClient();
+				break;
+			case 3:
+				again = false;
+				in.close();
+				System.out.println("au revoir");
+				break;
+			}
+		}while(again);
 	}
 
 }

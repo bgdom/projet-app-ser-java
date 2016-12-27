@@ -1,4 +1,4 @@
-package blibliotheque;
+package bibliotheque;
 
 import java.net.Socket;
 

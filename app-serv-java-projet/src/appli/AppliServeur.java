@@ -3,7 +3,7 @@ package appli;
 import java.io.IOException;
 
 import abonne.AbonneLoader;
-import blibliotheque.Bibliotheque;
+import bibliotheque.Bibliotheque;
 import document.DocumentLoader;
 /**
  * 

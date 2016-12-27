@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import abonne.Abonne;
-import blibliotheque.Document;
-import blibliotheque.DocumentFactory;
+import bibliotheque.Document;
+import bibliotheque.DocumentFactory;
 
 /**
  * represent an implementation of the DocumentFactory interface

@@ -8,8 +8,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import blibliotheque.AbonneFactory;
-import blibliotheque.Client;
+import bibliotheque.AbonneFactory;
+import bibliotheque.Client;
 
 /**
  * 

@@ -1,9 +1,9 @@
 package document;
 
 import abonne.Abonne;
-import blibliotheque.Client;
-import blibliotheque.Document;
-import blibliotheque.PasLibreException;
+import bibliotheque.Client;
+import bibliotheque.Document;
+import bibliotheque.PasLibreException;
 /**
  * 
  * @author guydo
@@ -31,9 +31,10 @@ public class Livre implements Document {
 	public void reserver(Client ab) throws PasLibreException {
 		if (reserveur != null)
 			throw new PasLibreException();
-
+		else if(emprunteur != null)
+			throw new PasLibreException();
 		this.reserveur = ab;
-
+		
 	}
 
 	@Override
@@ -41,10 +42,18 @@ public class Livre implements Document {
 		if (reserveur != null) {
 			if (reserveur.equals(ab)) {
 				emprunteur = ab;
+				ab.addEmpruntDocument(this);
 			} else {
 				throw new PasLibreException();
 			}
 
+		} else {
+			if(emprunteur != null)
+				throw new PasLibreException();
+			else{
+				emprunteur = ab;
+				ab.addEmpruntDocument(this);
+			}
 		}
 
 	}

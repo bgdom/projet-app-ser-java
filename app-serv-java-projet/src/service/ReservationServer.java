@@ -8,14 +8,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import blibliotheque.Bibliotheque;
-import blibliotheque.Client;
-import blibliotheque.Data;
-import blibliotheque.Document;
-import blibliotheque.InputWorker;
-import blibliotheque.OutputWorker;
-import blibliotheque.PasLibreException;
-import blibliotheque.ServiceServer;
+import bibliotheque.Bibliotheque;
+import bibliotheque.Client;
+import bibliotheque.Data;
+import bibliotheque.Document;
+import bibliotheque.InputWorker;
+import bibliotheque.NonInscritException;
+import bibliotheque.OutputWorker;
+import bibliotheque.PasLibreException;
+import bibliotheque.ServiceServer;
 
 /**
  * represent an implementation of Service and its job is to
@@ -35,6 +36,8 @@ public class ReservationServer implements ServiceServer {
 	/**
 	 * contructor
 	 * @param in the inputworker which will listen for incomming data after a socket was accepted
+	 * @param out the output worker which will write data
+	 * @param b the library
 	 */
 	public ReservationServer(InputWorker in, OutputWorker out, Bibliotheque b){
 		try {
@@ -55,7 +58,7 @@ public class ReservationServer implements ServiceServer {
 	public void run() {
 		if(server != null){// if there was no IOEception, we can start to work
 			try {
-				System.out.println("Le server est en marche");
+				System.err.println("Le server de réservation est en marche");
 				do{
 					Socket s = server.accept(); // accept connections
 					s.setSoTimeout(1);
@@ -66,7 +69,7 @@ public class ReservationServer implements ServiceServer {
 					output.add(d); // start the communication
 					synchronized(map){
 						map.put(s, null); // put on the map
-						System.out.println("Un nouveau client est accepté, il y en a "+ map.size());
+						System.err.println("Un nouveau client est accepté, il y en a "+ map.size());
 					}
 				}while(true);
 			} catch (IOException e) {
@@ -106,7 +109,7 @@ public class ReservationServer implements ServiceServer {
 				Client abo = null;
 				try{
 					abo = bi.getAbonneById(Integer.valueOf(b)); // get a user by the Id gave
-				}catch(NumberFormatException e){}
+				}catch(NumberFormatException | NonInscritException e){}
 				if(abo == null){ // if there is no user
 					d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
 							+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifier" + System.getProperty("line.separator"));
@@ -116,18 +119,18 @@ public class ReservationServer implements ServiceServer {
 					sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
 					if(c == null){ // if the user is not already registered in the map
 						if(clientAlreadyMapped(abo)){
-							System.out.println("abo conflict co");
+							//System.out.println("abo conflict co");
 							d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+
 									"Problème d'identité, vous êtes déconnecté, reconnectez vous avec votre Id"+ System.getProperty("line.separator")); 
 							return true;
 						}
-						System.out.println("new abo co");
+						//System.out.println("new abo co");
 						setClient(d.getS(), abo); // registers it with his account
 						sb.append("Vous êtes identifié(e)" + System.getProperty("line.separator"));
 						authOkAction(sb);
 						d.setMsg(sb.toString());
 					}else{
-						System.out.println("abo already co");
+						//System.out.println("abo already co");
 						authOkAction(sb);
 						d.setMsg(sb.toString());
 					}
@@ -138,7 +141,7 @@ public class ReservationServer implements ServiceServer {
 				Document doc = null;
 				try{
 					doc = bi.getDocumentById(Integer.valueOf(b)); // get adocument by the Id gave
-				}catch(NumberFormatException e){}
+				}catch(NumberFormatException | NonInscritException e){}
 				StringBuilder sb = new StringBuilder();
 				if(doc == null){ // if it doesn't exist
 					sb.append(AUTHENTIFICATION_ACTION+"OkErreur" + System.getProperty("line.separator"));
@@ -147,7 +150,9 @@ public class ReservationServer implements ServiceServer {
 				} else {
 					try { // try to book the document
 						sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
-						doc.reserver(retrieveClient(d.getS()));
+						Client c = retrieveClient(d.getS());
+						doc.reserver(c);
+						c.addReserveDocument(doc);
 						sb.append("Votre document est réservé, choisissez en d'autres si vous voulez"+ System.getProperty("line.separator"));
 						authOkAction(sb);
 					} catch (PasLibreException e) { // otherwise
@@ -207,10 +212,10 @@ public class ReservationServer implements ServiceServer {
 				map.remove(s);
 				try {
 					s.close();
-					System.out.println("Un nouveau client est déconnecté, il y en reste "+ map.size());
+					System.err.println("Un nouveau client est déconnecté, il y en reste "+ map.size());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					System.out.println("IOE during closing");
+					System.err.println("IOE during closing");
 					e.printStackTrace();
 				}
 			}
@@ -243,7 +248,7 @@ public class ReservationServer implements ServiceServer {
 					it.remove();
 				}
 			}
-			System.out.println("Le server s'arrête...");
+			System.err.println("Le server s'arrête...");
 		}
 	}
 }

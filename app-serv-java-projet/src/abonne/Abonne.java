@@ -1,6 +1,11 @@
 package abonne;
 
-import blibliotheque.Client;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import bibliotheque.Client;
+import bibliotheque.Document;
 
 /**
  * 
@@ -11,6 +16,8 @@ public class Abonne implements Client{
 	private String nom;
 	private  String prenom;
 	private int id;
+	private LinkedList<Document> emprunt;
+	private LinkedList<Document> reserve;
 	
 	/**
 	 * constructor
@@ -22,6 +29,8 @@ public class Abonne implements Client{
 		this.nom = nom;
 		this.prenom = prenom;
 		this.id = id;
+		emprunt = new LinkedList<Document>();
+		reserve = new LinkedList<Document>();
 	}
 	
 	/**
@@ -52,5 +61,39 @@ public class Abonne implements Client{
 	@Override
 	public String toString(){
 		return getNom() + " " + getPrenom() + " " + getId();
+	}
+
+	@Override
+	public void addReserveDocument(Document d) {
+		reserve.add(d);
+	}
+
+	@Override
+	public List<Document> getReservedDocuments() {
+		return reserve;
+	}
+
+	@Override
+	public void removeReserveDoc(Document d) {
+		reserve.removeFirstOccurrence(d);
+	}
+
+	@Override
+	public void removeEmpruntDoc(Document d) {
+		// TODO Auto-generated method stub
+		emprunt.removeFirstOccurrence(d);
+	}
+
+	@Override
+	public List<Document> getEmpruntDocuments() {
+		// TODO Auto-generated method stub
+		return emprunt;
+	}
+
+	@Override
+	public void addEmpruntDocument(Document d) {
+		// TODO Auto-generated method stub
+		removeReserveDoc(d);
+		emprunt.add(d);
 	}
 }
