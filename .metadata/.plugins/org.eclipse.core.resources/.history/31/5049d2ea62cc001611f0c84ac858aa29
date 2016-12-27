@@ -108,7 +108,7 @@ public class RetourServer implements ServiceServer {
 					+ System.getProperty("line.separator"));
 		
 		}
-		return true;
+		return false;
 	}
 
 	@Override

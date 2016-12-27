@@ -95,18 +95,19 @@ public class RetourServer implements ServiceServer {
 						+ "Le retour du livre " + doc.getTitre() + " à bien été enregistrer "
 						+ System.getProperty("line.separator") +"Entrez l'id d'un autre livre a rendre :");
 			
+				output.add(d);
 				doc.retour();
 			} else {
 				d.setMsg(RETOUR_ACTION + "Erreur" + System.getProperty("line.separator") + doc.getTitre()
 						+ " n'etait pas emprunter" + System.getProperty("line.separator")
 						+ " réessayer avec un autre id" + System.getProperty("line.separator"));
-			
+				output.add(d);
 			}
 		} else {
 			d.setMsg(RETOUR_ACTION + "Erreur" + System.getProperty("line.separator") + "Ce livre n'existe pas"
 					+ System.getProperty("line.separator") + " réessayer avec un autre id"
 					+ System.getProperty("line.separator"));
-		
+			output.add(d);
 		}
 		return true;
 	}

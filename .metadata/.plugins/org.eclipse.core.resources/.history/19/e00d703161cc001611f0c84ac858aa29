@@ -83,10 +83,17 @@ public class Bibliotheque {
 		
 		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
 		///********
+		OutputWorker o = new OutputWorker(); // to write data over sockets
+		new Thread(o).start();
 		
+		DataConsumer d = new DataConsumer(o); // to consume data that socket inputed
+		new Thread(d).start();
+		
+		InputWorker i = new InputWorker(d); // to read data over sockets
+		new Thread(i).start();
 		
 	
-		new Thread(new RetourServer(input, output, this)).start(); // Retour service 
+		new Thread(new RetourServer(i, o, this)).start(); // Retour service 
 	}
 
 }
