@@ -141,7 +141,7 @@ public class EmpruntServer implements ServiceServer {
 				Document doc = null;
 				try{
 					doc = bi.getDocumentById(Integer.valueOf(b)); // get adocument by the Id gave
-				}catch(NumberFormatException| NonInscritException e){}
+				}catch(NumberFormatException | NonInscritException e){}
 				StringBuilder sb = new StringBuilder();
 				if(doc == null){ // if it doesn't exist
 					sb.append(AUTHENTIFICATION_ACTION+"OkErreur" + System.getProperty("line.separator"));

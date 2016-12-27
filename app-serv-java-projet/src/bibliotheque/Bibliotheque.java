@@ -8,6 +8,8 @@ import abonne.Abonne;
 import service.EmpruntClient;
 import service.EmpruntServer;
 import service.ReservationServer;
+import service.RetourClient;
+import service.RetourServer;
 /**
  * 
  * @author guydo
@@ -82,8 +84,8 @@ public class Bibliotheque {
 		InputWorker input = new InputWorker(dataConsumer); // to read data over sockets
 		new Thread(input).start();
 		
-		
 		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
+		new Thread(new RetourServer(input, output, this)).start(); // Retour service 
 		new Thread(new EmpruntServer(input, output, this)).start();
 		
 		boolean again = true;
@@ -110,6 +112,9 @@ public class Bibliotheque {
 			switch(code){
 			case 1:
 				new EmpruntClient();
+				break;
+			case 2:
+				new RetourClient();
 				break;
 			case 3:
 				again = false;

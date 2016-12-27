@@ -32,7 +32,7 @@ public interface Document {
 	/**
 	 * free the document
 	 */
-	void retour(); // document rendu ou annulation réservation
+	boolean retour(); // document rendu ou annulation réservation
 	
 	/**
 	 * 
@@ -51,4 +51,9 @@ public interface Document {
 	 * @return the Id of the document
 	 */
 	int getNumero();
+	/**
+	 * 
+	 * @return the person which barrow the document
+	 */
+	Client getEmprunteur();
 }

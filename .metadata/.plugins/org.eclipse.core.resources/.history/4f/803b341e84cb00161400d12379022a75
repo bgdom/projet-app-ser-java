@@ -1,0 +1,25 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+public class Client implements Runnable {
+private Socket s;
+private BufferedReader sin;
+private PrintWriter sout;
+
+public Client(String Host, int Port) throws UnknownHostException, IOException{
+	// Cree une socket pour communiquer avec le service se trouvant sur la
+	// machine host au port PORT
+	s = new Socket(Host,Port);
+	 new Thread(this).start();
+}
+
+@Override
+public void run() {
+	// TODO Auto-generated method stub
+	
+}
+}
