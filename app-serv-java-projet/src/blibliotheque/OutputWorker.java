@@ -42,10 +42,11 @@ public class OutputWorker implements Runnable {
 			Data d = null;
 			do{
 				synchronized(liste){
-					if(liste.size() == 0) // if there is no data to output
+					if(liste.size() == 0){ // if there is no data to output
 							System.out.println("output waiting");
 							liste.wait(); // wait until data is added
 							System.out.println("output woked up");
+					}
 					d = liste.remove(); // else remove and take it
 				}
 				try {
@@ -53,7 +54,6 @@ public class OutputWorker implements Runnable {
 					buff.print(d.getMsg());
 					buff.flush();
 					System.out.println("Le server a envoyé une réponse");
-					buff.close();
 				} catch (IOException e) {
 					d.getC().remove(d.getS()); // if there is a problem, remove and disconnect this socket
 					synchronized(liste){
