@@ -91,7 +91,7 @@ public class Bibliotheque {
 		boolean again = true;
 		do{
 			System.out.println("Que voulez vous lancez : "+System.getProperty("line.separator")+
-					"1. emprunt"+System.getProperty("line.separator")+ "2. réservation"
+					"1. emprunt"+System.getProperty("line.separator")+ "2. retour"
 					+System.getProperty("line.separator")+"3. Tout arreter");
 			Scanner in = new Scanner(System.in);
 			String line = "";

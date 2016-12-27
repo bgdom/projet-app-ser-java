@@ -52,7 +52,7 @@ public class RetourServer implements ServiceServer {
 					output.add(d); // start the communication
 					synchronized (map) {
 						map.put(s, null); // put on the map
-						System.out.println("Un nouveau client est accepté, il y en a " + map.size());
+						System.err.println("Un nouveau client est accepté, il y en a " + map.size());
 					}
 				} while (true);
 			} catch (IOException e) {
