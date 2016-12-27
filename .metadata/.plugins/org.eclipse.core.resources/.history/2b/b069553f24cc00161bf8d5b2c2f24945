@@ -54,7 +54,7 @@ public class OutputWorker implements Runnable {
 					buff.print(d.getMsg());
 					buff.flush();
 					System.out.println("Le server a envoyé une réponse");
-					//buff.close();
+					buff.close();
 				} catch (IOException e) {
 					d.getC().remove(d.getS()); // if there is a problem, remove and disconnect this socket
 					synchronized(liste){

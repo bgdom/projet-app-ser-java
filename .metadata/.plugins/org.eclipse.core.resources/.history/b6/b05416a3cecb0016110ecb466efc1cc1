@@ -71,7 +71,6 @@ public class Client implements Runnable {
 					else
 						sb.append(System.getProperty("line.separator"));
 				}
-				line = sb.toString();
 				if(line.contains("Erreur")){
 					System.err.println("> ERREUR RECOMMENCER\n" +line);
 					System.err.flush();	
