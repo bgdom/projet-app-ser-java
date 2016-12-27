@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import blibliotheque.AbonneFactory;
-import blibliotheque.Document;
-import blibliotheque.DocumentFactory;
+import blibliotheque.Client;
 
 /**
  * 
@@ -20,8 +19,8 @@ import blibliotheque.DocumentFactory;
 public class AbonneLoader implements AbonneFactory{
 
 	@Override
-	public List<Abonne> getAbonneFromFile(String fileName) {
-		ArrayList<Abonne> liste = new ArrayList<Abonne>();
+	public List<Client> getAbonneFromFile(String fileName) {
+		ArrayList<Client> liste = new ArrayList<Client>();
 		try {
 			BufferedReader buff = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 			String line;

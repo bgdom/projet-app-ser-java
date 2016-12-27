@@ -1,5 +1,6 @@
 package blibliotheque;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -12,7 +13,7 @@ import service.ReservationServer;
  */
 public class Bibliotheque {
 	private List<Document> documents;
-	private List<Abonne> abonnes;
+	private List<Client> abonnes;
 	
 	/**
 	 * constructor
@@ -34,8 +35,8 @@ public class Bibliotheque {
 	 * @param id
 	 * @return a user
 	 */
-	private Abonne getAbonneById(int id) {
-		for (Abonne a : abonnes) {
+	public Client getAbonneById(int id) {
+		for (Client a : abonnes) {
 			if (id == a.getId()) {
 				return a;
 			}
@@ -43,12 +44,21 @@ public class Bibliotheque {
 		return null;
 	}
 	
+	public List<Document> getDocumentsLibre(){
+		List<Document> l = new ArrayList<Document>();
+		for (Document d : documents) {
+			if (d.isFree()) {
+				l.add(d);
+			}
+		}
+		return l;
+	}
 	/**
 	 * retrieve a document by its id
 	 * @param id
 	 * @return a document
 	 */
-	private Document getDocumentById(int id) {
+	public Document getDocumentById(int id) {
 		for (Document d : documents) {
 			if (id == d.getNumero()) {
 				return d;
@@ -71,7 +81,7 @@ public class Bibliotheque {
 		new Thread(input).start();
 		
 		
-		new Thread(new ReservationServer(input)).start(); // Reservation service 
+		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
 	}
 
 }

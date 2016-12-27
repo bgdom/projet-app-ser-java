@@ -3,7 +3,6 @@ package blibliotheque;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
@@ -47,7 +46,9 @@ public class InputWorker implements Runnable {
 			do{ // loop over the data list
 				synchronized(liste){
 					if(liste.size() == 0){ // if the list is empty 
+						System.out.println("input wainting");
 							liste.wait(); // wait that an other thread notify after an insert
+							System.out.println("input woked up");
 					}
 					d = liste.remove(); // get the first data
 					liste.add(liste.size(), d); // on the last position
@@ -65,7 +66,7 @@ public class InputWorker implements Runnable {
 						if(!sb.toString().isEmpty()){
 							d.setMsg(sb.toString());
 							System.out.println(sb.toString());
-							consumer.add(d); // add to the consumer to process data					
+							consumer.add(new Data(d.getS(), sb.substring(0), d.getC())); // add to the consumer to process data					
 						}
 					}
 					

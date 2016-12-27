@@ -1,6 +1,7 @@
 package document;
 
 import abonne.Abonne;
+import blibliotheque.Client;
 import blibliotheque.Document;
 import blibliotheque.PasLibreException;
 /**
@@ -11,8 +12,8 @@ import blibliotheque.PasLibreException;
 public class Livre implements Document {
 	private int numero;
 	private String titre;
-	private Abonne reserveur;
-	private Abonne emprunteur;
+	private Client reserveur;
+	private Client emprunteur;
 
 	public Livre(Integer numero, String titre) {
 		this.numero = numero;
@@ -27,7 +28,7 @@ public class Livre implements Document {
 	}
 
 	@Override
-	public void reserver(Abonne ab) throws PasLibreException {
+	public void reserver(Client ab) throws PasLibreException {
 		if (reserveur != null)
 			throw new PasLibreException();
 
@@ -36,7 +37,7 @@ public class Livre implements Document {
 	}
 
 	@Override
-	public void emprunter(Abonne ab) throws PasLibreException {
+	public void emprunter(Client ab) throws PasLibreException {
 		if (reserveur != null) {
 			if (reserveur.equals(ab)) {
 				emprunteur = ab;
@@ -71,5 +72,11 @@ public class Livre implements Document {
 	@Override
 	public String toString(){
 		return getTitre() +" " + getNumero() ;
+	}
+
+	@Override
+	public boolean isFree() {
+		// TODO Auto-generated method stub
+		return (emprunteur == null && reserveur == null);
 	}
 }

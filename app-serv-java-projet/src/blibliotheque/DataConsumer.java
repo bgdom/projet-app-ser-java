@@ -40,8 +40,11 @@ public class DataConsumer implements Runnable {
 			Data d = null;
 			do{
 				synchronized(liste){
-					if(liste.size() == 0) // if there is no data to consume
+					if(liste.size() == 0){ // if there is no data to consume
+						System.out.println("consumer wainting");
 							liste.wait(); // wait until a data is insert by an other thread
+							System.out.println("consumer woked up");
+					}
 					d = liste.remove(); // else remove it from the list take it
 				}
 				if(d.getC().consume(d)){ // process it
