@@ -11,9 +11,8 @@ import java.net.UnknownHostException;
 public class RetourClient {
 	private static final int PORT = 2700;
 	private static final String IP = "127.0.0.1";
-	private Socket s ;
 	
-	public RetourClient(){
+	public static void main(String[] args) {
 		
 		Socket s = null;
 			try {

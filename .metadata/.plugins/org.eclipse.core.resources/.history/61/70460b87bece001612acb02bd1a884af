@@ -127,7 +127,7 @@ public class RetourServer implements ServiceServer {
 				map.remove(s);
 				try {
 					s.close();
-					System.err.println("Retour : Un nouveau client est déconnecté, il y en reste "+ map.size());
+					System.err.println("Emprunt : Un nouveau client est déconnecté, il y en reste "+ map.size());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					System.err.println("IOE during closing");

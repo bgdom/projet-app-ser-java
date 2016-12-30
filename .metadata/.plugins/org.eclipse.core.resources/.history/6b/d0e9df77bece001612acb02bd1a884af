@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class RetourServer implements ServiceServer {
 	private static final int PORT = 2700;
@@ -120,47 +118,8 @@ public class RetourServer implements ServiceServer {
 	}
 
 	@Override
-	public void remove(Socket s){
+	public void remove(Socket s) {
 		// TODO Auto-generated method stub
-		synchronized(map){
-			if(map.containsKey(s)){
-				map.remove(s);
-				try {
-					s.close();
-					System.err.println("Retour : Un nouveau client est déconnecté, il y en reste "+ map.size());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					System.err.println("IOE during closing");
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	
-	@Override
-	public void finalize(){
-		if(server != null){
-			try {
-				server.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			synchronized(map){
-				Iterator<Entry<Socket, Client>> it = map.entrySet().iterator();
-				while(it.hasNext()){
-					try {
-						it.next().getKey().close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					it.remove();
-				}
-			}
-			System.err.println("Le server RETOUR s'arrête...");
-		}
+				
 	}
 }
