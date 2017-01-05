@@ -171,7 +171,7 @@ public class EmpruntServer implements ServiceServer {
 		if(l.size() != 0){
 			sb.append("Voici les documents libre (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
 			for(Document doc : l){
-				sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
+				sb.append(doc.numero() + " " +doc.getTitre() + System.getProperty("line.separator"));
 			}
 		}else{
 			sb.append("Aucun document n'est libre" + System.getProperty("line.separator"));
@@ -181,7 +181,7 @@ public class EmpruntServer implements ServiceServer {
 		if(l.size() != 0){
 			sb.append("Voici les documents que vous avez réserver  (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
 			for(Document doc : l){
-				sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
+				sb.append(doc.numero() + " " +doc.getTitre() + System.getProperty("line.separator"));
 			}
 		}
 	}

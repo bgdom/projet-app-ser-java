@@ -48,11 +48,6 @@ public interface Document {
 	
 	/**
 	 * 
-	 * @return the Id of the document
-	 */
-	int getNumero();
-	/**
-	 * 
 	 * @return the person which barrow the document
 	 */
 	Client getEmprunteur();

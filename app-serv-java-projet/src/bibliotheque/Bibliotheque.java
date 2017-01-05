@@ -15,7 +15,7 @@ import service.RetourServer;
  * @author guydo
  * represent a Library that manage Retour, Emprunt et réservation 
  */
-public class Bibliotheque {
+public class Bibliotheque implements CheckRetardable{
 	private List<Document> documents;
 	private List<Client> abonnes;
 	

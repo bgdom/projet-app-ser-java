@@ -1,6 +1,5 @@
 package abonne;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class Abonne implements Client{
 	private int id;
 	private LinkedList<Document> emprunt;
 	private LinkedList<Document> reserve;
-	
+
 	/**
 	 * constructor
 	 * @param nom

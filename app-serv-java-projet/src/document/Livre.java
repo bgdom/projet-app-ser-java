@@ -1,6 +1,5 @@
 package document;
 
-import abonne.Abonne;
 import bibliotheque.Client;
 import bibliotheque.Document;
 import bibliotheque.PasLibreException;
@@ -14,7 +13,8 @@ public class Livre implements Document {
 	private String titre;
 	private Client reserveur;
 	private Client emprunteur;
-
+	private long dureeEmprunt;
+	
 	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
@@ -55,7 +55,7 @@ public class Livre implements Document {
 				ab.addEmpruntDocument(this);
 			}
 		}
-
+		dureeEmprunt = 0;
 	}
 
 	@Override
@@ -63,6 +63,7 @@ public class Livre implements Document {
 		if (reserveur !=null || emprunteur !=null){
 			reserveur = null;
 			emprunteur = null;
+			
 			return true;
 		}
 		return false;
@@ -73,16 +74,10 @@ public class Livre implements Document {
 		// TODO Auto-generated method stub
 		return titre;
 	}
-
-	@Override
-	public int getNumero() {
-		// TODO Auto-generated method stub
-		return numero;
-	}
 	
 	@Override
 	public String toString(){
-		return getTitre() +" " + getNumero() ;
+		return getTitre() +" " + numero() ;
 	}
 
 	@Override
