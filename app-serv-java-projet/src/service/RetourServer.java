@@ -100,8 +100,14 @@ public class RetourServer implements ServiceServer {
 				d.setMsg(RETOUR_ACTION + System.getProperty("line.separator") + "Ce livre (" +doc.getTitre()+") etait emprunter par "
 						+ doc.getEmprunteur().getNom().toUpperCase() + " "
 						+ doc.getEmprunteur().getPrenom().toUpperCase() + System.getProperty("line.separator")
-						+ "Le retour du livre " + doc.getTitre() + " à bien été enregistrer "+  System.getProperty("line.separator")+"Voici les livres encore non rendu : "+s.toString()
-						+ System.getProperty("line.separator") +"Entrez l'id d'un autre livre a rendre :");
+						+ "Le retour du livre " + doc.getTitre() + " à bien été enregistrer "+  System.getProperty("line.separator"));
+				s.delete(0, s.length());
+				for(Document dc : doc.getEmprunteur().getEmpruntDocuments()){
+					if(dc != doc)
+					s.append(dc.toString()+ System.getProperty("line.separator"));
+				}
+				d.setMsg(d.getMsg()+"Voici les livres encore non rendu : "+s.toString()
+						+ System.getProperty("line.separator") +"Entrez l'id d'un autre livre a rendre :"+ System.getProperty("line.separator"));
 				doc.getEmprunteur().removeEmpruntDoc(doc);
 				doc.retour();
 			} else {

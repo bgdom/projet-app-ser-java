@@ -94,6 +94,6 @@ public class Livre implements Document {
 	@Override
 	public Client getEmprunteur() {
 		// TODO Auto-generated method stub
-		return reserveur;
+		return emprunteur;
 	}
 }
