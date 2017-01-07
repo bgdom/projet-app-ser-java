@@ -1,10 +1,15 @@
 package service;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import javax.swing.Timer;
+
 /**
  * Classe client
  * @author hassa
@@ -14,9 +19,25 @@ public class EmpruntClient {
 	private final static int PORT = 2600;
 	private final static String HOST = "localhost"; 
 	
+	// certification BretteSoft "Guerrier des steppes"
+	private Timer session;
+	//La durée d'une session sans activité dure 3 minute
+	private static final int DUREE_SESSION = 180000;
+	
 	public EmpruntClient() {
 		Socket s = null;	
 		try {
+			// Debut de la session
+			// Gere le temps d'activité d'un utilisateur
+			ActionListener activité = new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					throw new DelaiSessionDepasserException();
+				}
+			};
+			session = new Timer(DUREE_SESSION, activité);
+			session.setRepeats(false);
+			session.start();
+			
 			// Cree une socket pour communiquer avec le service se trouvant sur la
 			// machine host au port PORT
 			s = new Socket(HOST, PORT);
@@ -61,6 +82,10 @@ public class EmpruntClient {
 				if(l.isEmpty())
 					break;
 				l = getAction(line)+System.getProperty("line.separator")+l;
+				// si il ya une activité de la part de l'utilisateur on
+				// reinitialise le timer
+				session.restart();
+
 				line="";
 				sb.delete(0, sb.length());
 				if (l.equals("")) break;

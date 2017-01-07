@@ -1,24 +1,31 @@
 package document;
 
-import abonne.Abonne;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+
 import bibliotheque.Client;
 import bibliotheque.Document;
 import bibliotheque.PasLibreException;
+
 /**
  * 
- * @author guydo
- * represent an implementation of Document, a book 
+ * @author guydo represent an implementation of Document, a book
  */
 public class Livre implements Document {
 	private int numero;
 	private String titre;
 	private Client reserveur;
 	private Client emprunteur;
+	private static final int TEMPS_RESERVATION_MAX = 7200000;
+	private Timer tempsReservation;
 
 	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
-		emprunteur =null /*new Abonne("Thameur","Hassan",1)*/;
+		emprunteur = null /* new Abonne("Thameur","Hassan",1) */;
 		reserveur = null;
 	}
 
@@ -31,10 +38,21 @@ public class Livre implements Document {
 	public void reserver(Client ab) throws PasLibreException {
 		if (reserveur != null)
 			throw new PasLibreException();
-		else if(emprunteur != null)
+		else if (emprunteur != null)
 			throw new PasLibreException();
 		this.reserveur = ab;
-		
+
+		// Debut de la session de reservation
+		ActionListener activité = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				reserveur.removeReserveDoc(Livre.this);
+				Livre.this.retour();
+		}
+		};
+		tempsReservation = new Timer(TEMPS_RESERVATION_MAX, activité);
+		tempsReservation.setRepeats(false);
+		tempsReservation.start();
+		System.out.println("demarer");
 	}
 
 	@Override
@@ -43,14 +61,17 @@ public class Livre implements Document {
 			if (reserveur.equals(ab)) {
 				emprunteur = ab;
 				ab.addEmpruntDocument(this);
+				//annule le timer de reservation(client est venu l'emprunter a temps)
+				tempsReservation.stop();
+				tempsReservation = null;
 			} else {
 				throw new PasLibreException();
 			}
 
 		} else {
-			if(emprunteur != null)
+			if (emprunteur != null)
 				throw new PasLibreException();
-			else{
+			else {
 				emprunteur = ab;
 				ab.addEmpruntDocument(this);
 			}
@@ -60,7 +81,7 @@ public class Livre implements Document {
 
 	@Override
 	public boolean retour() {
-		if (reserveur !=null || emprunteur !=null){
+		if (reserveur != null || emprunteur != null) {
 			reserveur = null;
 			emprunteur = null;
 			return true;
@@ -79,10 +100,10 @@ public class Livre implements Document {
 		// TODO Auto-generated method stub
 		return numero;
 	}
-	
+
 	@Override
-	public String toString(){
-		return getTitre() +" " + getNumero() ;
+	public String toString() {
+		return getTitre() + " " + getNumero();
 	}
 
 	@Override

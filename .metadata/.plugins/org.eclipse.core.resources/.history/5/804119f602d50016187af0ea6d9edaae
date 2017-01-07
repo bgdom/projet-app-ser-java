@@ -1,0 +1,120 @@
+package document;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import abonne.Abonne;
+import bibliotheque.Client;
+import bibliotheque.Document;
+import bibliotheque.PasLibreException;
+
+/**
+ * 
+ * @author guydo represent an implementation of Document, a book
+ */
+public class Livre implements Document {
+	private int numero;
+	private String titre;
+	private Client reserveur;
+	private Client emprunteur;
+	private static final int TEMPS_RESERVATION_MAX = 7200000;
+	private Timer tempsReservation;
+
+	public Livre(Integer numero, String titre) {
+		this.numero = numero;
+		this.titre = titre;
+		emprunteur = null /* new Abonne("Thameur","Hassan",1) */;
+		reserveur = null;
+	}
+
+	@Override
+	public int numero() {
+		return numero;
+	}
+
+	@Override
+	public void reserver(Client ab) throws PasLibreException {
+		if (reserveur != null)
+			throw new PasLibreException();
+		else if (emprunteur != null)
+			throw new PasLibreException();
+		this.reserveur = ab;
+
+		// Debut de la session
+		// Gere le temps d'activité d'un utilisateur
+		ActionListener activité = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				emprunteur.removeReserveDoc(Livre.this);
+				Livre.this.retour();
+			}
+		};
+		tempsReservation = new Timer(TEMPS_RESERVATION_MAX, activité);
+		tempsReservation.setRepeats(false);
+		tempsReservation.start();
+	}
+
+	@Override
+	public void emprunter(Client ab) throws PasLibreException {
+		if (reserveur != null) {
+			if (reserveur.equals(ab)) {
+				emprunteur = ab;
+				ab.addEmpruntDocument(this);
+				//annule le timer de reservation(client est venu l'emprunter a temps)
+				tempsReservation.stop();
+				tempsReservation = null;
+			} else {
+				throw new PasLibreException();
+			}
+
+		} else {
+			if (emprunteur != null)
+				throw new PasLibreException();
+			else {
+				emprunteur = ab;
+				ab.addEmpruntDocument(this);
+			}
+		}
+
+	}
+
+	@Override
+	public boolean retour() {
+		if (reserveur != null || emprunteur != null) {
+			reserveur = null;
+			emprunteur = null;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String getTitre() {
+		// TODO Auto-generated method stub
+		return titre;
+	}
+
+	@Override
+	public int getNumero() {
+		// TODO Auto-generated method stub
+		return numero;
+	}
+
+	@Override
+	public String toString() {
+		return getTitre() + " " + getNumero();
+	}
+
+	@Override
+	public boolean isFree() {
+		// TODO Auto-generated method stub
+		return (emprunteur == null && reserveur == null);
+	}
+
+	@Override
+	public Client getEmprunteur() {
+		// TODO Auto-generated method stub
+		return emprunteur;
+	}
+}
