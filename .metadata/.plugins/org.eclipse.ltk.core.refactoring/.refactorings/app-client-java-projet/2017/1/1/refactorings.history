@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;DelaiSessionDepasserException.java&apos; to &apos;app-serv-java-projet/src/service&apos;&#x0D;&#x0A;- Original project: &apos;app-client-java-projet&apos;&#x0D;&#x0A;- Destination element: &apos;app-serv-java-projet/src/service&apos;&#x0D;&#x0A;- Original element: &apos;client.DelaiSessionDepasserException.java&apos;" description="Copy compilation unit" destination="=app-serv-java-projet/src&lt;service" element1="/src&lt;client{DelaiSessionDepasserException.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1483812449317" units="1" version="1.0"/>
+</session>

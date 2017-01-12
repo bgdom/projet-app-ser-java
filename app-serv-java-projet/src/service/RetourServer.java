@@ -101,19 +101,24 @@ public class RetourServer extends AbstractService implements ServiceServer {
 		} catch(NonInscritException | NumberFormatException e){}
 		if (doc != null) {
 			if (!bi.isFree(doc)) {
+				Client holder = (bi.getEmprunteur(doc) != null) ? bi.getEmprunteur(doc) : bi.getReserver(doc);
 				d.setMsg(RETOUR_ACTION + System.getProperty("line.separator") + "Ce livre (" +doc.toString()+") etait emprunté par "
-						+ bi.getEmprunteur(doc).getNom().toUpperCase() + " "
-						+ bi.getEmprunteur(doc).getPrenom().toUpperCase() + System.getProperty("line.separator")
+						+ holder.getNom().toUpperCase() + " "
+						+ holder.getPrenom().toUpperCase() + System.getProperty("line.separator")
 						+ "Le retour du livre " + doc.toString() + " à bien été enregistrer "+  System.getProperty("line.separator"));
 				StringBuilder s = new StringBuilder();
-				for(Document dc : bi.getEmpruntedBy(bi.getEmprunteur(doc))){
+				for(Document dc : bi.getEmpruntedBy(holder)){
 					if(dc != doc)
 					s.append(dc.toString()+ System.getProperty("line.separator"));
 				}
-				d.setMsg(d.getMsg()+"Voici les livres encore non rendu : "+s.toString()
+				for(Document dc : bi.getReservedBy(holder)){
+					if(dc != doc)
+					s.append(dc.toString()+ System.getProperty("line.separator"));
+				}
+				d.setMsg(d.getMsg()+"Voici les livres encore non rendu ou réservés : "+s.toString()
 						+ System.getProperty("line.separator") +"Entrez l'id d'un autre livre a rendre :"+ System.getProperty("line.separator"));
 				if(array.length > 1){
-					ck.addClient(bi.getEmprunteur(doc));
+					ck.addClient(holder);
 					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour la dégradation du livre du livre)"+ System.getProperty("line.separator"));
 				} else if (!ck.manageTime(doc))
 					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour le retard du livre du livre)"+ System.getProperty("line.separator"));

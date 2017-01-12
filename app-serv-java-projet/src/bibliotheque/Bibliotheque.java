@@ -142,4 +142,9 @@ public class Bibliotheque {
 		indisponiblesR.remove(doc);
 	}
 
+	public Client getReserver(Document doc) {
+		// TODO Auto-generated method stub
+		return indisponiblesR.get(doc);
+	}
+
 }

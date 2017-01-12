@@ -165,7 +165,7 @@ public class ReservationServer extends AbstractService implements ServiceServer 
 							sb.append("Erreur" + System.getProperty("line.separator")+"Vous ne pouvez pas réservez"+ System.getProperty("line.separator"));
 							authOkAction(sb);
 					} catch (PasLibreException e) { // otherwise
-						sb.append(System.getProperty("line.separator")+"Ce document n'est pas libre, entrez en un nouveau"+ System.getProperty("line.separator"));
+						sb.append(System.getProperty("line.separator")+"Ce document n'est pas libre, entrez en un nouveau, un mail vous sera envoyez quand il sera de nouveau disponible"+ System.getProperty("line.separator"));
 						authOkAction(sb);
 					}
 				}
