@@ -25,7 +25,7 @@ public class Client implements Runnable {
 	// certification BretteSoft "Guerrier des steppes"
 	private Timer session;
 	//La durée d'une session sans activité dure 10 minute
-	private static final int DUREE_SESSION = 600000;
+	private static final int DUREE_SESSION = 10000;//600000;
 
 	public Client(String Host, int Port) throws UnknownHostException, IOException {
 		// Cree une socket pour communiquer avec le service se trouvant sur la
