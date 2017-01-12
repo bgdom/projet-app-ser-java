@@ -16,13 +16,6 @@ import javax.mail.internet.MimeMessage;
  */
 public class Mail {
 	    Session mailSession;
-
-	    public static void main(String args[]) throws AddressException,    MessagingException
-	    {
-	        Mail javaEmail = new Mail();
-	        javaEmail.envoyerEmail("salut","hassan.thameur@gmail.com");
-	    }
-
 	    private void setMailServerProperties()
 	    {
 	        Properties emailProperties = System.getProperties();
@@ -32,10 +25,10 @@ public class Mail {
 	        mailSession = Session.getDefaultInstance(emailProperties, null);
 	    }
 
-	    private MimeMessage configurerEmail(String Msgmail,String Destinataire) throws AddressException, MessagingException
+	    private MimeMessage configurerEmail(String Msgmail,String sujetMail,String Destinataire) throws AddressException, MessagingException
 	    {
 	       String[] toEmails = {Destinataire};
-	        String emailSubject = "Test email subject";
+	      
 	      
 	        MimeMessage emailMessage = new MimeMessage(mailSession);
 	       
@@ -43,15 +36,14 @@ public class Mail {
 	        {
 	            emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmails[i]));
 	        }
-	        emailMessage.setSubject(emailSubject);
+	        emailMessage.setSubject(sujetMail);
 	      
 	        emailMessage.setContent(Msgmail, "text/html");
-	      
-	        //emailMessage.setText(emailBody);// for a text email
+	    
 	        return emailMessage;
 	    }
 
-	    private void envoyerEmail(String Msgmail,String Destinataire) throws AddressException, MessagingException
+	    public void envoyerEmail(String Msgmail,String sujetMail,String Destinataire) throws AddressException, MessagingException
 	    {
 	    	  this.setMailServerProperties();
 	        /**
@@ -67,7 +59,7 @@ public class Mail {
 	        /**
 	         * Configure
 	         * */
-	        MimeMessage emailMessage = configurerEmail(Msgmail, Destinataire);
+	        MimeMessage emailMessage = configurerEmail(Msgmail,sujetMail, Destinataire);
 	        /**
 	         * envoyer un mail
 	         * */

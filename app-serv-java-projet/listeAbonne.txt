@@ -1,5 +1,5 @@
-Thameur;hassan;1
-Dominique;Besson;2
-Jean Luc;Commet;3
-Marc;Antoine;4
-Charle;De Gaule;5
+Thameur;hassan;1;hassan.thameur@gmail.com
+Dominique;Besson;2;hassan.thameur@gmail.com
+Jean Luc;Commet;3;hassan.thameur@gmail.com
+Marc;Antoine;4;hassan.thameur@gmail.com
+Charle;De Gaule;5;hassan.thameur@gmail.com

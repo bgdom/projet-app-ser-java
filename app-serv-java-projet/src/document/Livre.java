@@ -2,13 +2,16 @@ package document;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.swing.Timer;
-
 
 import bibliotheque.Client;
 import bibliotheque.Document;
 import bibliotheque.PasLibreException;
+import service.Mail;
 
 /**
  * 
@@ -17,6 +20,7 @@ import bibliotheque.PasLibreException;
 public class Livre implements Document {
 	private int numero;
 	private String titre;
+	private ArrayList<Client> AvertissementDispo;
 	private Client reserveur;
 	private Client emprunteur;
 	private static final int TEMPS_RESERVATION_MAX = 7200000;
@@ -25,8 +29,9 @@ public class Livre implements Document {
 	public Livre(Integer numero, String titre) {
 		this.numero = numero;
 		this.titre = titre;
-		emprunteur = null /* new Abonne("Thameur","Hassan",1) */;
+		emprunteur = null;
 		reserveur = null;
+		AvertissementDispo = new ArrayList<Client>();
 	}
 
 	@Override
@@ -36,10 +41,15 @@ public class Livre implements Document {
 
 	@Override
 	public void reserver(Client ab) throws PasLibreException {
-		if (reserveur != null)
+		if (reserveur != null) {
+			AvertissementDispo.add(ab);
 			throw new PasLibreException();
-		else if (emprunteur != null)
+
+		} else if (emprunteur != null) {
+			AvertissementDispo.add(ab);
 			throw new PasLibreException();
+		}
+
 		this.reserveur = ab;
 
 		// Debut de la session de reservation
@@ -47,7 +57,7 @@ public class Livre implements Document {
 			public void actionPerformed(ActionEvent evt) {
 				reserveur.removeReserveDoc(Livre.this);
 				Livre.this.retour();
-		}
+			}
 		};
 		tempsReservation = new Timer(TEMPS_RESERVATION_MAX, activité);
 		tempsReservation.setRepeats(false);
@@ -61,7 +71,8 @@ public class Livre implements Document {
 			if (reserveur.equals(ab)) {
 				emprunteur = ab;
 				ab.addEmpruntDocument(this);
-				//annule le timer de reservation(client est venu l'emprunter a temps)
+				// annule le timer de reservation(client est venu l'emprunter a
+				// temps)
 				tempsReservation.stop();
 				tempsReservation = null;
 			} else {
@@ -84,6 +95,22 @@ public class Livre implements Document {
 		if (reserveur != null || emprunteur != null) {
 			reserveur = null;
 			emprunteur = null;
+
+			for (Client a : AvertissementDispo) {
+				Mail javaEmail = new Mail();
+				try {
+					javaEmail.envoyerEmail(
+							" Salut " + a.getPrenom() + " ! Le livre " + this.titre
+									+ " est disponible Reserver le dès maintenant ou venez l'empruntez.",
+							"Information de retour d'un livre ", a.getEmail());
+				} catch (AddressException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (MessagingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			return true;
 		}
 		return false;

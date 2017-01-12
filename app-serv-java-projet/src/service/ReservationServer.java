@@ -156,7 +156,7 @@ public class ReservationServer implements ServiceServer {
 						sb.append("Votre document est réservé, choisissez en d'autres si vous voulez"+ System.getProperty("line.separator"));
 						authOkAction(sb);
 					} catch (PasLibreException e) { // otherwise
-						sb.append("Ce document n'est pas libre, entrez en un nouveau"+ System.getProperty("line.separator"));
+						sb.append("Ce document n'est pas libre, entrez en un nouveau un mail vous sera envoyez quand il sera de nouveau disponible"+ System.getProperty("line.separator"));
 						authOkAction(sb);
 					}
 				}

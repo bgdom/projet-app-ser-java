@@ -12,4 +12,6 @@ public interface Client {
 	void removeEmpruntDoc(Document d);
 	List<Document> getReservedDocuments();
 	List<Document> getEmpruntDocuments();
+	String getEmail();
+
 }

@@ -16,6 +16,7 @@ public class Abonne implements Client{
 	private String nom;
 	private  String prenom;
 	private int id;
+	private String email;
 	private LinkedList<Document> emprunt;
 	private LinkedList<Document> reserve;
 	
@@ -25,12 +26,13 @@ public class Abonne implements Client{
 	 * @param prenom
 	 * @param id
 	 */
-	public Abonne(String nom, String prenom, int id) {
+	public Abonne(String nom, String prenom, int id,String Email) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.id = id;
 		emprunt = new LinkedList<Document>();
 		reserve = new LinkedList<Document>();
+		email =Email;
 	}
 	
 	/**
@@ -96,4 +98,12 @@ public class Abonne implements Client{
 		removeReserveDoc(d);
 		emprunt.add(d);
 	}
+
+	@Override
+	public String getEmail() {
+		// TODO Auto-generated method stub
+		return email;
+	}
+
+
 }
