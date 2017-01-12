@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import bibliotheque.AbonneFactory;
+import bibliotheque.ClientFactory;
 import bibliotheque.Client;
 
 /**
@@ -16,7 +16,7 @@ import bibliotheque.Client;
  * @author guydo
  * represent a class to load different type of Users
  */
-public class AbonneLoader implements AbonneFactory{
+public class AbonneLoader implements ClientFactory{
 
 	@Override
 	public List<Client> getAbonneFromFile(String fileName) {

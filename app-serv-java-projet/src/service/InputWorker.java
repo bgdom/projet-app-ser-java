@@ -1,4 +1,4 @@
-package bibliotheque;
+package service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
  * @author guydo
  *
  */
-public class InputWorker implements Runnable {
+public class InputWorker extends AbstractService {
 	private DataConsumer consumer;
 	private LinkedList<Data> liste; // list 
 	
@@ -42,6 +42,7 @@ public class InputWorker implements Runnable {
 	public void run() {
 		// TODO Auto-generated method stub
 		try {
+			System.err.println("InputWorker : Marche");
 			Data d = null;
 			do{ // loop over the data list
 				synchronized(liste){
@@ -55,7 +56,7 @@ public class InputWorker implements Runnable {
 				}
 				try {
 					BufferedReader buff = new BufferedReader(new InputStreamReader(d.getS().getInputStream())); // to read data
-					String line;
+					String line = "";
 					StringBuilder sb = new StringBuilder();
 					try{
 						while((line = buff.readLine()) != null){
@@ -65,23 +66,28 @@ public class InputWorker implements Runnable {
 						//System.out.println("input time out");
 						if(!sb.toString().isEmpty()){
 							d.setMsg(sb.toString());
-							//System.out.println(sb.toString());
+							//System.out.println(d.getC().getClass().getName() +" : "+sb.toString());
 							consumer.add(new Data(d.getS(), sb.substring(0), d.getC())); // add to the consumer to process data					
 						}
 					}
-					
-					//System.out.println("next");
+					if(line == null){
+						d.getC().remove(d.getS()); // if there is a problem, remove and disconnect it
+						synchronized(liste){
+							liste.removeFirstOccurrence(d); // remove the data
+						}
+					}
 				} catch (IOException e) {
 					d.getC().remove(d.getS()); // if there is a problem, remove and disconnect it
 					synchronized(liste){
 						liste.removeFirstOccurrence(d); // remove the data
 					}
 				}
-			}while(true);
+			}while(!th.isInterrupted());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("InputWorker : Arrêt");
 		}
+		liste.clear();
 	}
 
 }

@@ -1,5 +1,6 @@
 package document;
 
+import bibliotheque.Bibliotheque;
 import bibliotheque.Client;
 import bibliotheque.Document;
 import bibliotheque.PasLibreException;
@@ -13,12 +14,13 @@ public class Livre implements Document {
 	private String titre;
 	private Client reserveur;
 	private Client emprunteur;
-	private long dureeEmprunt;
+	private Bibliotheque bi;
 	
-	public Livre(Integer numero, String titre) {
+	public Livre(Integer numero, String titre, Bibliotheque b) {
+		bi = b;
 		this.numero = numero;
 		this.titre = titre;
-		emprunteur =null /*new Abonne("Thameur","Hassan",1)*/;
+		emprunteur = null;
 		reserveur = null;
 	}
 
@@ -34,7 +36,7 @@ public class Livre implements Document {
 		else if(emprunteur != null)
 			throw new PasLibreException();
 		this.reserveur = ab;
-		
+		bi.reserve(this, ab);
 	}
 
 	@Override
@@ -42,7 +44,9 @@ public class Livre implements Document {
 		if (reserveur != null) {
 			if (reserveur.equals(ab)) {
 				emprunteur = ab;
-				ab.addEmpruntDocument(this);
+				reserveur = null;
+				bi.free(this);
+				bi.borrow(this, ab);
 			} else {
 				throw new PasLibreException();
 			}
@@ -52,43 +56,27 @@ public class Livre implements Document {
 				throw new PasLibreException();
 			else{
 				emprunteur = ab;
-				ab.addEmpruntDocument(this);
+				bi.borrow(this, ab);
 			}
 		}
-		dureeEmprunt = 0;
 	}
 
 	@Override
-	public boolean retour() {
+	public void retour() {
 		if (reserveur !=null || emprunteur !=null){
 			reserveur = null;
 			emprunteur = null;
-			
-			return true;
+			bi.free(this);
 		}
-		return false;
-	}
-
-	@Override
-	public String getTitre() {
-		// TODO Auto-generated method stub
-		return titre;
 	}
 	
 	@Override
 	public String toString(){
-		return getTitre() +" " + numero() ;
+		return numero() + " " + titre ;
 	}
 
 	@Override
-	public boolean isFree() {
-		// TODO Auto-generated method stub
-		return (emprunteur == null && reserveur == null);
-	}
-
-	@Override
-	public Client getEmprunteur() {
-		// TODO Auto-generated method stub
-		return emprunteur;
+	public int hashCode(){
+		return titre.hashCode();
 	}
 }

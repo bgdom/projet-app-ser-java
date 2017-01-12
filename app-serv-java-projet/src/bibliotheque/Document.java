@@ -1,14 +1,11 @@
 package bibliotheque;
 
-import abonne.Abonne;
-
 /**
  * represent an abstract document
  * @author guydo
  *
  */
 public interface Document {
-	
 	/**
 	 * 
 	 * @return the Id of the Document
@@ -32,23 +29,5 @@ public interface Document {
 	/**
 	 * free the document
 	 */
-	boolean retour(); // document rendu ou annulation réservation
-	
-	/**
-	 * 
-	 * @return the title of the document
-	 */
-	String getTitre();
-	
-	/**
-	 * 
-	 * @return if the document is free
-	 */
-	boolean isFree();
-	
-	/**
-	 * 
-	 * @return the person which barrow the document
-	 */
-	Client getEmprunteur();
+	void retour(); // document rendu ou annulation réservation
 }

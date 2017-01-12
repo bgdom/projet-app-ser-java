@@ -1,4 +1,4 @@
-package service;
+package clients;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,18 +6,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-
 public class RetourClient {
 	private static final int PORT = 2700;
 	private static final String IP = "127.0.0.1";
-	private Socket s ;
-	
-	public RetourClient(){
 		
-		Socket s = null;
+	public static void main(String args[]) {
+			// TODO Auto-generated method stub
+			Socket s = null;
 			try {
 				s = new Socket(IP, PORT);
-
+				System.err.println("RETOUR CLIENT : Marche");
 				// Cree les streams pour lire et ecrire du texte dans cette socket
 				BufferedReader sin = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				PrintWriter sout = new PrintWriter(s.getOutputStream(), true);
@@ -27,10 +25,11 @@ public class RetourClient {
 				// Informe l'utilisateur de la connection
 				System.out.println("Connecté au serveur " + s.getInetAddress() + ":" + s.getPort());
 
+				boolean again = true;
 				String line = "";
 				StringBuilder sb = new StringBuilder();
 				String l;
-				while (true) {
+				while (again) {
 
 					while((line = sin.readLine()) != null) {
 						sb.append(line);
@@ -69,16 +68,15 @@ public class RetourClient {
 					// envoie au serveur
 					sout.println(l);
 					sout.flush();
-
-					if(line == null)
-						System.out.println("Connection fermee par le serveur");
 				}
+				if(line == null)
+					System.out.println("Connection fermee par le serveur");
 			}
 
 			catch (IOException e) {
 				System.out.println("Connection fermee par le serveur");
 			}
-			System.out.println("Aurevoir");
+			System.err.println("RETOUR CLIENT : Arrêt");
 			// Refermer dans tous les cas la socket
 			try {
 				if (s != null)
@@ -97,7 +95,6 @@ public class RetourClient {
 				line =line.replace("Erreur", "");
 			}
 			return line.substring(0,line.indexOf(System.getProperty("line.separator")));
-		 
 		}
 
 	}
