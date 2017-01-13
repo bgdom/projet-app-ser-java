@@ -1,9 +1,0 @@
-package client;
-
-public class DelaiSessionDepasserException extends RuntimeException {
-
-	public DelaiSessionDepasserException(){
-		Super("Votre session a expirer car vous etes restez inactif pendant 10 minute");
-	}
-
-}

@@ -1,6 +1,6 @@
 package abonne;
 
-import blibliotheque.Client;
+import bibliotheque.Client;
 
 /**
  * 
@@ -11,17 +11,23 @@ public class Abonne implements Client{
 	private String nom;
 	private  String prenom;
 	private int id;
+	private String email;
 	
+	@Override
+	public int hashCode(){
+		return id;
+	}
 	/**
 	 * constructor
 	 * @param nom
 	 * @param prenom
 	 * @param id
 	 */
-	public Abonne(String nom, String prenom, int id) {
+	public Abonne(String nom, String prenom, int id,String Email) {
 		this.nom = nom;
 		this.prenom = prenom;
 		this.id = id;
+		this.email =Email;
 	}
 	
 	/**
@@ -52,5 +58,11 @@ public class Abonne implements Client{
 	@Override
 	public String toString(){
 		return getNom() + " " + getPrenom() + " " + getId();
+	}
+	
+	@Override
+	public String getEmail() {
+		// TODO Auto-generated method stub
+		return email;
 	}
 }

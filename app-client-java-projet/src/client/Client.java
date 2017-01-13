@@ -19,7 +19,7 @@ import javax.swing.Timer;
  * @author hassa
  *
  */
-public class Client implements Runnable {
+public class Client{
 	private Socket s;
 
 	// certification BretteSoft "Guerrier des steppes"
@@ -31,11 +31,10 @@ public class Client implements Runnable {
 		// Cree une socket pour communiquer avec le service se trouvant sur la
 		// machine host au port PORT
 		s = new Socket(Host, Port);
-
-		new Thread(this).start();
+		
+		run();
 	}
 
-	@Override
 	public void run() {
 
 		try {
@@ -87,8 +86,10 @@ public class Client implements Runnable {
 					System.out.flush();	
 				}
 				l = clavier.readLine();
-				if(l.isEmpty())
+				if(l.isEmpty()){
+					clavier.close();
 					break;
+				}
 				l = getAction(line)+System.getProperty("line.separator")+l;
 				// si il ya une activité de la part de l'utilisateur on
 				// reinitialise le timer
@@ -102,12 +103,8 @@ public class Client implements Runnable {
 				sout.println(l);
 				sout.flush();
 
-				if(line == null)
-					System.out.println("Connection fermee par le serveur");
 			}
-		}
-
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.out.println("Connection fermee par le serveur");
 		}
 		System.out.println("Aurevoir");
@@ -116,7 +113,7 @@ public class Client implements Runnable {
 			if (s != null)
 				s.close();
 		} catch (IOException e2) {
-			;
+			
 		}
 	}
 
@@ -135,7 +132,13 @@ public class Client implements Runnable {
 	/**
 	 * Fonction appelée juste avant que le garbage collector supprime l'objet
 	 */
-	protected void finalize() throws Throwable {
-		s.close();
+	protected void finalize() {
+		if(s != null)
+			try {
+				s.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 }

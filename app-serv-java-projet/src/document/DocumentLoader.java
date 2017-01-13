@@ -6,11 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
-import abonne.Abonne;
-import blibliotheque.Document;
-import blibliotheque.DocumentFactory;
+import bibliotheque.Bibliotheque;
+import bibliotheque.Document;
+import bibliotheque.DocumentFactory;
 
 /**
  * represent an implementation of the DocumentFactory interface
@@ -18,6 +17,12 @@ import blibliotheque.DocumentFactory;
  *
  */
 public class DocumentLoader implements DocumentFactory{
+	
+	private Bibliotheque bi;
+	
+	public DocumentLoader(Bibliotheque b){
+		bi = b;
+	}
 
 	@Override
 	public ArrayList<Document> getDocumentFromFile(String fileName) {
@@ -28,7 +33,7 @@ public class DocumentLoader implements DocumentFactory{
 			while((line = buff.readLine()) != null){
 				String tab[] = line.split(";");
 				if(tab.length == 2)
-					liste.add(new Livre(Integer.valueOf(tab[0]), tab[1]));
+					liste.add(new Livre(Integer.valueOf(tab[0]), tab[1], bi));
 			}
 			buff.close();
 		} catch (FileNotFoundException e) {

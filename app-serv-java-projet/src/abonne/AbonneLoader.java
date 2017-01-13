@@ -8,15 +8,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import blibliotheque.AbonneFactory;
-import blibliotheque.Client;
+import bibliotheque.ClientFactory;
+import bibliotheque.Client;
 
 /**
  * 
  * @author guydo
  * represent a class to load different type of Users
  */
-public class AbonneLoader implements AbonneFactory{
+public class AbonneLoader implements ClientFactory{
 
 	@Override
 	public List<Client> getAbonneFromFile(String fileName) {
@@ -26,8 +26,8 @@ public class AbonneLoader implements AbonneFactory{
 			String line;
 			while((line = buff.readLine()) != null){ // read an entry
 				String tab[] = line.split(";");
-				if(tab.length == 3)
-					liste.add(new Abonne(tab[0], tab[1],Integer.valueOf(tab[2]))); // convert it into a user and add it
+				if(tab.length == 4)
+					liste.add(new Abonne(tab[0], tab[1],Integer.valueOf(tab[2]),tab[3])); // convert it into a user and add it
 			}
 			buff.close();
 		} catch (FileNotFoundException e) {

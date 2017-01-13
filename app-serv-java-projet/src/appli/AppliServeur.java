@@ -3,8 +3,9 @@ package appli;
 import java.io.IOException;
 
 import abonne.AbonneLoader;
-import blibliotheque.Bibliotheque;
+import bibliotheque.Bibliotheque;
 import document.DocumentLoader;
+import service.ServiceManager;
 /**
  * 
  * @author guydo
@@ -13,8 +14,9 @@ import document.DocumentLoader;
 public class AppliServeur {
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
-		new Bibliotheque().start(new DocumentLoader(), new AbonneLoader());
+
+		Bibliotheque b = new Bibliotheque();
+		b.start(new DocumentLoader(b), new AbonneLoader(), new ServiceManager());
 	}
 
 }
