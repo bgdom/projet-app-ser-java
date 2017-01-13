@@ -23,4 +23,7 @@
 <fullyQualifiedTypeName name="javax.mail.MessagingException"/>
 <fullyQualifiedTypeName name="javax.mail.Transport"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="java.nio.file.attribute.UserPrincipalNotFoundException"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
 </qualifiedTypeNameHistroy>

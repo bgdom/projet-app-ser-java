@@ -6,6 +6,15 @@
 		<item value="bitbucket.org"/>
 	</list>
 	<section name="org.eclipse.egit.ui.internal.merge.MergeResultDialog.dialogBounds">
+		<item value="753" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="199" key="DIALOG_HEIGHT"/>
+		<item value="315" key="DIALOG_X_ORIGIN"/>
+		<item value="260" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.pull.PullResultDialog.dialogBounds">
+		<item value="537" key="DIALOG_X_ORIGIN"/>
+		<item value="265" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="org.eclipse.egit.ui.internal.fetch.FetchResultDialog.dialogBounds">
 		<item value="616" key="DIALOG_WIDTH"/>

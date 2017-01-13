@@ -4,6 +4,7 @@ import bibliotheque.Bibliotheque;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
 
 import javax.mail.MessagingException;
@@ -28,7 +29,7 @@ public class Livre implements Document {
 	private static final int TEMPS_RESERVATION_MAX = 7200000;
 	private Timer tempsReservation;
 	private Bibliotheque bi;
-	
+
 	public Livre(Integer numero, String titre, Bibliotheque b) {
 		bi = b;
 		this.numero = numero;
@@ -96,7 +97,7 @@ public class Livre implements Document {
 
 	@Override
 	public void retour() {
-		if (reserveur !=null || emprunteur !=null){
+		if (reserveur != null || emprunteur != null) {
 			reserveur = null;
 			emprunteur = null;
 			bi.free(this);
@@ -105,9 +106,11 @@ public class Livre implements Document {
 				Mail javaEmail = new Mail();
 				try {
 					javaEmail.envoyerEmail(
-							" Salut " + a.getPrenom() + " ! Le livre " + this.titre
+							" Salut " + a.getPrenom().toUpperCase() + " ! Le livre " + this.titre
 									+ " est disponible Reserver le dès maintenant ou venez l'empruntez.",
-							"Information de retour d'un livre ", a.getEmail());
+							"Information de retour d'un livre " + System.getProperty("line.separator") + "cordialement,"
+									+ System.getProperty("line.separator")+"Dominique Besson et Hassan Thameur Groupe 208",
+							a.getEmail());
 				} catch (AddressException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -120,12 +123,12 @@ public class Livre implements Document {
 	}
 
 	@Override
-	public String toString(){
-		return numero() + " " + titre ;
+	public String toString() {
+		return numero() + " " + titre;
 	}
 
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return titre.hashCode();
 	}
 }
