@@ -1,4 +1,4 @@
-package service;
+package client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,25 +7,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import javax.swing.Timer;
-
 
 public class RetourClient {
 	private static final int PORT = 2700;
 	private static final String IP = "127.0.0.1";
-	private Socket s ;
 	// certification BretteSoft "Guerrier des steppes"
-		private Timer session;
 		//La durée d'une session sans activité dure 3 minute
 		private static final int DUREE_SESSION = 180000;
 
-	public RetourClient(){
-		
-		Socket s = null;
+	public static void main(String args[]) {
+			// TODO Auto-generated method stub
+			Timer session;
+			Socket s = null;
 			try {
 				s = new Socket(IP, PORT);
+				System.err.println("RETOUR CLIENT : Marche");
 				// Debut de la session
 				// Gere le temps d'activité d'un utilisateur
 				ActionListener activité = new ActionListener() {
@@ -46,10 +44,11 @@ public class RetourClient {
 				// Informe l'utilisateur de la connection
 				System.out.println("Connecté au serveur " + s.getInetAddress() + ":" + s.getPort());
 
+				boolean again = true;
 				String line = "";
 				StringBuilder sb = new StringBuilder();
 				String l;
-				while (true) {
+				while (again) {
 
 					while((line = sin.readLine()) != null) {
 						sb.append(line);
@@ -88,16 +87,15 @@ public class RetourClient {
 					// envoie au serveur
 					sout.println(l);
 					sout.flush();
-
-					if(line == null)
-						System.out.println("Connection fermee par le serveur");
 				}
+				if(line == null)
+					System.out.println("Connection fermee par le serveur");
 			}
 
 			catch (IOException e) {
 				System.out.println("Connection fermee par le serveur");
 			}
-			System.out.println("Aurevoir");
+			System.err.println("RETOUR CLIENT : Arrêt");
 			// Refermer dans tous les cas la socket
 			try {
 				if (s != null)
@@ -116,7 +114,6 @@ public class RetourClient {
 				line =line.replace("Erreur", "");
 			}
 			return line.substring(0,line.indexOf(System.getProperty("line.separator")));
-		 
 		}
 
 	}

@@ -1,10 +1,7 @@
-package bibliotheque;
+package service;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.PushbackReader;
 import java.util.LinkedList;
 
 /**
@@ -12,7 +9,7 @@ import java.util.LinkedList;
  * @author guydo
  *
  */
-public class OutputWorker implements Runnable {
+public class OutputWorker extends AbstractService {
 	private LinkedList<Data> liste; // list of data
 	
 	/**
@@ -39,6 +36,7 @@ public class OutputWorker implements Runnable {
 	@Override
 	public void run() {
 		try {
+			System.err.println("OutputWorker : Marche");
 			Data d = null;
 			do{
 				synchronized(liste){
@@ -53,7 +51,7 @@ public class OutputWorker implements Runnable {
 					PrintWriter buff = new PrintWriter(d.getS().getOutputStream()); // to write data into the socket
 					buff.print(d.getMsg());
 					buff.flush();
-					//System.out.println("Le server a envoyé une réponse");
+					//System.out.println(d.getC().getClass().getName() +" : "+d.getMsg());
 				} catch (IOException e) {
 					d.getC().remove(d.getS()); // if there is a problem, remove and disconnect this socket
 					synchronized(liste){
@@ -61,11 +59,12 @@ public class OutputWorker implements Runnable {
 					}
 				}
 				d = null;
-			}while(true);
+			}while(!th.isInterrupted());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("OutputWorker : Arrêt");
 		}
+		liste.clear();
 	}
 
 }

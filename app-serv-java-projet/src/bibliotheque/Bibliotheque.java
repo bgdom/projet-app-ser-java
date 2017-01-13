@@ -2,14 +2,11 @@ package bibliotheque;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import abonne.Abonne;
-import service.EmpruntClient;
-import service.EmpruntServer;
-import service.ReservationServer;
-import service.RetourClient;
-import service.RetourServer;
 /**
  * 
  * @author guydo
@@ -18,20 +15,48 @@ import service.RetourServer;
 public class Bibliotheque {
 	private List<Document> documents;
 	private List<Client> abonnes;
+	private ConcurrentHashMap<Document, Client> indisponiblesE;
+	private ConcurrentHashMap<Document, Client> indisponiblesR;
 	
 	/**
 	 * constructor
 	 * @param dFactory factory to load documents
 	 * @param aFactory factory to load Users
 	 */
-	public void start(DocumentFactory dFactory, AbonneFactory aFactory){
+	public void start(DocumentFactory dFactory, ClientFactory aFactory,ServiceLoader sl  ){
 		documents = dFactory.getDocumentFromFile("listeLivres.txt");
 		abonnes = aFactory.getAbonneFromFile("listeAbonne.txt");
+		indisponiblesE = new ConcurrentHashMap<Document, Client>();
+		indisponiblesR = new ConcurrentHashMap<Document, Client>();
 		
 		System.out.println(documents);
 		System.out.println(abonnes);
 		
-		run();
+		List<Service> list = sl.load(this); // load all services associated
+		for(Service s : list)
+			s.lancer(); // start all
+		Scanner in = new Scanner(System.in);
+		System.out.println("Appuyez sur entrez pour fermer la bibliothèque");
+		in.nextLine();
+		for(Service s : list) /* stop all if the user want */
+			s.stropper(); 
+		in.close();
+	}
+	
+	/**
+	 * 
+	 * @return the documents list
+	 */
+	public List<Document> getDocuments(){
+		return documents;
+	}
+	
+	/**
+	 * 
+	 * @return the customers list
+	 */
+	public List<Client> getClients(){
+		return abonnes;
 	}
 	
 	/**
@@ -39,7 +64,7 @@ public class Bibliotheque {
 	 * @param id
 	 * @return a user
 	 */
-	public Client getAbonneById(int id) throws NonInscritException{
+	public Client getClientById(int id) throws NonInscritException{
 		for (Client a : abonnes) {
 			if (id == a.getId()) {
 				return a;
@@ -48,15 +73,6 @@ public class Bibliotheque {
 		throw new NonInscritException();
 	}
 	
-	public List<Document> getDocumentsLibre(){
-		List<Document> l = new ArrayList<Document>();
-		for (Document d : documents) {
-			if (d.isFree()) {
-				l.add(d);
-			}
-		}
-		return l;
-	}
 	/**
 	 * retrieve a document by its id
 	 * @param id
@@ -64,65 +80,71 @@ public class Bibliotheque {
 	 */
 	public Document getDocumentById(int id) throws NonInscritException {
 		for (Document d : documents) {
-			if (id == d.getNumero()) {
+			if (id == d.numero()) {
 				return d;
 			}
 		}
 		throw new NonInscritException();
 	}
+	
+	public List<Document> getDocumentsLibre(){
+		List<Document> l = new ArrayList<Document>();
+		for (Document d : documents) {
+			if (isFree(d)) {
+				l.add(d);
+			}
+		}
+		return l;
+	}
 
-	/**
-	 * launch services, workers, consumer and start processing
-	 */
-	private void run() {
-		OutputWorker output = new OutputWorker(); // to write data over sockets
-		new Thread(output).start();
-		
-		DataConsumer dataConsumer = new DataConsumer(output); // to consume data that socket inputed
-		new Thread(dataConsumer).start();
-		
-		InputWorker input = new InputWorker(dataConsumer); // to read data over sockets
-		new Thread(input).start();
-		
-		new Thread(new ReservationServer(input, output, this)).start(); // Reservation service 
-		new Thread(new RetourServer(input, output, this)).start(); // Retour service 
-		new Thread(new EmpruntServer(input, output, this)).start();
-		
-		boolean again = true;
-		do{
-			System.out.println("Que voulez vous lancez : "+System.getProperty("line.separator")+
-					"1. emprunt"+System.getProperty("line.separator")+ "2. retour"
-					+System.getProperty("line.separator")+"3. Tout arreter");
-			Scanner in = new Scanner(System.in);
-			String line = "";
-			boolean again2 = true;
-			int code = 0;
-			while(again2){
-				line = in.nextLine();
-				try{
-					code = Integer.valueOf(line);
-					if(code > 0 && code <= 3)
-						again2 = false;
-					else
-						System.out.println("Votre saisie n'est pas bonnne, recommencez");
-				} catch(NumberFormatException e){
-					System.out.println("Votre saisie n'est pas bonnne, recommencez");
-				}
-			}
-			switch(code){
-			case 1:
-				new EmpruntClient();
-				break;
-			case 2:
-				new RetourClient();
-				break;
-			case 3:
-				again = false;
-				in.close();
-				System.out.println("au revoir");
-				break;
-			}
-		}while(again);
+	public List<Document> getReservedBy(Client c){
+		List<Document> l = new ArrayList<Document>();
+		if(c == null)
+			return l;
+		Set<Entry<Document,Client>> set = indisponiblesR.entrySet();
+		for(Entry<Document,Client> e : set){
+			if(e.getValue() == c)
+				l.add(e.getKey());
+		}
+		return l;
+	}
+	
+	public List<Document> getEmpruntedBy(Client c){
+		List<Document> l = new ArrayList<Document>();
+		if(c == null)
+			return l;
+		Set<Entry<Document,Client>> set = indisponiblesE.entrySet();
+		for(Entry<Document,Client> e : set){
+			if(e.getValue() == c)
+				l.add(e.getKey());
+		}
+		return l;
+	}
+	
+	public Client getEmprunteur(Document doc){
+		return indisponiblesE.get(doc);
+	}
+	public boolean isFree(Document doc) {
+		return !indisponiblesE.containsKey(doc) && !indisponiblesR.containsKey(doc);
+	}
+	
+	public void reserve(Document doc, Client c){
+		indisponiblesR.put(doc, c);
+	}
+	
+	public void borrow(Document doc, Client c){
+		indisponiblesE.put(doc, c);
+	}
+	
+	public void free(Document doc) {
+		// TODO Auto-generated method stub
+		indisponiblesE.remove(doc);
+		indisponiblesR.remove(doc);
+	}
+
+	public Client getReserver(Document doc) {
+		// TODO Auto-generated method stub
+		return indisponiblesR.get(doc);
 	}
 
 }

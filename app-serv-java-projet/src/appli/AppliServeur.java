@@ -5,6 +5,7 @@ import java.io.IOException;
 import abonne.AbonneLoader;
 import bibliotheque.Bibliotheque;
 import document.DocumentLoader;
+import service.ServiceManager;
 /**
  * 
  * @author guydo
@@ -14,7 +15,8 @@ public class AppliServeur {
 
 	public static void main(String[] args) throws IOException {
 
-		new Bibliotheque().start(new DocumentLoader(), new AbonneLoader());
+		Bibliotheque b = new Bibliotheque();
+		b.start(new DocumentLoader(b), new AbonneLoader(), new ServiceManager());
 	}
 
 }

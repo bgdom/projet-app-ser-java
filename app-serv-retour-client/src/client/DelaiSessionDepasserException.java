@@ -1,4 +1,4 @@
-package service;
+package client;
 
 public class DelaiSessionDepasserException extends RuntimeException {
 

@@ -2,12 +2,14 @@ package bibliotheque;
 
 import java.net.Socket;
 
+import service.Data;
+
 /**
  * represent a service for the server side
  * @author guydo
  *
  */
-public interface ServiceServer extends Runnable{
+public interface ServiceServer {
 	
 	/**
 	 * process and consume the data

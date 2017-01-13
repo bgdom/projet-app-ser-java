@@ -2,9 +2,7 @@ package bibliotheque;
 
 import java.util.List;
 
-import abonne.Abonne;
-
-public interface AbonneFactory {
+public interface ClientFactory {
 	
 	/**
 	 * 

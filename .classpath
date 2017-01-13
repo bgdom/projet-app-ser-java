@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="app-client-java-projet/src"/>
+	<classpathentry kind="src" path="app-serv-java-projet/src"/>
+	<classpathentry kind="src" path="testmail/src"/>
+	<classpathentry kind="lib" path="app-client-java-projet/client.jar"/>
+	<classpathentry kind="lib" path="app-serv-java-projet/server.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="app-client-java-projet/bin"/>
+</classpath>

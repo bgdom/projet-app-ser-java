@@ -1,4 +1,4 @@
-package bibliotheque;
+package service;
 
 import java.util.LinkedList;
 
@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * @author guydo
  *class to consume data
  */
-public class DataConsumer implements Runnable {
+public class DataConsumer extends AbstractService {
 	private OutputWorker output;
 	private LinkedList<Data> liste; // liste of data to consume
 	
@@ -37,6 +37,7 @@ public class DataConsumer implements Runnable {
 	@Override
 	public void run() {
 		try {
+			System.err.println("DataConsumer : Marche");
 			Data d = null;
 			do{
 				synchronized(liste){
@@ -52,11 +53,12 @@ public class DataConsumer implements Runnable {
 				}else
 					d.getC().remove(d.getS()); // else, there is a problem, remove and disconnect it
 				d = null;
-			}while(true);
+			}while(!th.isInterrupted());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("DataConsumer : Arrêt");
 		}
+		liste.clear();
 	}
 
 }

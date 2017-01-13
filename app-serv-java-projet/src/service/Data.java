@@ -1,6 +1,8 @@
-package bibliotheque;
+package service;
 
 import java.net.Socket;
+
+import bibliotheque.ServiceServer;
 
 /**
  * 

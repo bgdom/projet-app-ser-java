@@ -3,6 +3,7 @@ package service;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,11 +11,8 @@ import java.util.Map.Entry;
 
 import bibliotheque.Bibliotheque;
 import bibliotheque.Client;
-import bibliotheque.Data;
 import bibliotheque.Document;
-import bibliotheque.InputWorker;
 import bibliotheque.NonInscritException;
-import bibliotheque.OutputWorker;
 import bibliotheque.PasLibreException;
 import bibliotheque.ServiceServer;
 
@@ -24,28 +22,30 @@ import bibliotheque.ServiceServer;
  * @author guydo
  *
  */
-public class EmpruntServer implements ServiceServer {
+public class EmpruntServer extends AbstractService implements ServiceServer {
 	private static final int PORT = 2600;
-	private static final String IP = "127.0.0.1";
 	private ServerSocket server;
 	private InputWorker input; // to read data
 	private OutputWorker output;
 	private HashMap<Socket, Client> map; // to store sockets
 	private Bibliotheque bi;
 	private static final String AUTHENTIFICATION_ACTION = "authentification";
+	private Checker ck;
+	
 	/**
 	 * contructor
 	 * @param in the inputworker which will listen for incomming data after a socket was accepted
 	 * @param out the output worker which will write data
 	 * @param b the library
 	 */
-	public EmpruntServer(InputWorker in, OutputWorker out, Bibliotheque b){
+	public EmpruntServer(InputWorker in, OutputWorker out, Bibliotheque b, Checker c){
 		try {
 			server = new ServerSocket(PORT);
 			input = in;
 			output = out;
 			this.bi = b;
 			map = new HashMap<Socket,Client>();
+			ck = c;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,27 +56,32 @@ public class EmpruntServer implements ServiceServer {
 	 */
 	@Override
 	public void run() {
-		if(server != null){// if there was no IOEception, we can start to work
-			try {
-				System.out.println("Le server d'emprunt est en marche");
-				do{
-					Socket s = server.accept(); // accept connections
-					s.setSoTimeout(1);
-					Data d = new Data(s,null, this);
-					input.add(d); // put data on the inputworker
-					d.setMsg(AUTHENTIFICATION_ACTION + System.getProperty("line.separator") + "Vous êtes connecté(e) sur le serveur d'emprunt"
-					+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifiez " + System.getProperty("line.separator"));
-					output.add(d); // start the communication
-					synchronized(map){
-						map.put(s, null); // put on the map
-						System.err.println("Emprunt : Un nouveau client est accepté, il y en a "+ map.size());
-					}
-				}while(true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(server != null){// if there was no IOEception, we can start to work
+				try {
+					System.err.println("Emprunt : Marche");
+					server.setSoTimeout(1000);
+					do{
+						try{
+							Socket s = server.accept(); // accept connections
+							s.setSoTimeout(1);
+							Data d = new Data(s,null, this);
+							input.add(d); // put data on the inputworker
+							d.setMsg(AUTHENTIFICATION_ACTION + System.getProperty("line.separator") + "Vous êtes connecté(e) sur le serveur d'emprunt"
+							+ System.getProperty("line.separator") + " Entrez votre Id pour vous identifiez " + System.getProperty("line.separator"));
+							output.add(d); // start the communication
+							synchronized(map){
+								map.put(s, null); // put on the map
+								System.err.println("Emprunt : Un nouveau client est accepté, il y en a "+ map.size());
+							}
+						} catch (SocketTimeoutException e){
+							
+						}
+					}while(!th.isInterrupted());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
+				finalize();
 			}
-		}
 	}
 
 	@Override
@@ -108,7 +113,7 @@ public class EmpruntServer implements ServiceServer {
 			case AUTHENTIFICATION_ACTION: // to identifie user
 				Client abo = null;
 				try{
-					abo = bi.getAbonneById(Integer.valueOf(b)); // get a user by the Id gave
+					abo = bi.getClientById(Integer.valueOf(b)); // get a user by the Id gave
 				}catch(NumberFormatException| NonInscritException e){}
 				if(abo == null){ // if there is no user
 					d.setMsg(AUTHENTIFICATION_ACTION+"Erreur"+System.getProperty("line.separator")+"Vous êtes connecté(e) sur le serveur"
@@ -149,12 +154,19 @@ public class EmpruntServer implements ServiceServer {
 					authOkAction(sb, retrieveClient(d.getS()));
 				} else {
 					try { // try to book the document
-						sb.append(AUTHENTIFICATION_ACTION+"Ok" + System.getProperty("line.separator"));
-						doc.emprunter(retrieveClient(d.getS()));
-						sb.append("Votre document est emprunté, choisissez en d'autres si vous voulez"+ System.getProperty("line.separator"));
+						sb.append(AUTHENTIFICATION_ACTION+"Ok");
+						Client c = retrieveClient(d.getS());
+						if(!ck.isProblem(c)){
+							doc.emprunter(c);
+							sb.append(System.getProperty("line.separator")+"Votre document est emprunté, choisissez en d'autres si vous voulez"+ System.getProperty("line.separator"));
+							ck.takeCare(doc);
+						} else {
+							sb.append("Erreur" + System.getProperty("line.separator"));
+							sb.append("Vous ne pouvez pas emprunter de documents"+ System.getProperty("line.separator"));
+						}
 						authOkAction(sb, retrieveClient(d.getS()));
 					} catch (PasLibreException e) { // otherwise
-						sb.append("Ce document n'est pas libre, entrez en un nouveau"+ System.getProperty("line.separator"));
+						sb.append(System.getProperty("line.separator")+"Ce document n'est pas libre, entrez en un nouveau"+ System.getProperty("line.separator"));
 						authOkAction(sb, retrieveClient(d.getS()));
 					}
 				}
@@ -171,17 +183,17 @@ public class EmpruntServer implements ServiceServer {
 		if(l.size() != 0){
 			sb.append("Voici les documents libre (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
 			for(Document doc : l){
-				sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
+				sb.append(doc.toString() + System.getProperty("line.separator"));
 			}
 		}else{
 			sb.append("Aucun document n'est libre" + System.getProperty("line.separator"));
 		}
 		
-		l = c.getReservedDocuments();
+		l = bi.getReservedBy(c);
 		if(l.size() != 0){
 			sb.append("Voici les documents que vous avez réserver  (sélectionnez les en entrant leur numéro)"+ System.getProperty("line.separator"));
 			for(Document doc : l){
-				sb.append(doc.getNumero() + " " +doc.getTitre() + System.getProperty("line.separator"));
+				sb.append(doc.toString() + System.getProperty("line.separator"));
 			}
 		}
 	}
@@ -221,7 +233,7 @@ public class EmpruntServer implements ServiceServer {
 					System.err.println("Emprunt : Un nouveau client est déconnecté, il y en reste "+ map.size());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					System.err.println("IOE during closing");
+					System.err.println("Emprunt : IOE during closing");
 					e.printStackTrace();
 				}
 			}
@@ -254,7 +266,7 @@ public class EmpruntServer implements ServiceServer {
 					it.remove();
 				}
 			}
-			System.err.println("Enprunt : Le server s'arrête...");
+			System.err.println("Enprunt : Arrêt");
 		}
 	}
 }

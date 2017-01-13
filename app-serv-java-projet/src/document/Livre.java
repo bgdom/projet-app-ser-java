@@ -1,5 +1,7 @@
 package document;
 
+import bibliotheque.Bibliotheque;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -25,8 +27,10 @@ public class Livre implements Document {
 	private Client emprunteur;
 	private static final int TEMPS_RESERVATION_MAX = 7200000;
 	private Timer tempsReservation;
-
-	public Livre(Integer numero, String titre) {
+	private Bibliotheque bi;
+	
+	public Livre(Integer numero, String titre, Bibliotheque b) {
+		bi = b;
 		this.numero = numero;
 		this.titre = titre;
 		emprunteur = null;
@@ -51,30 +55,31 @@ public class Livre implements Document {
 		}
 
 		this.reserveur = ab;
-
+		bi.reserve(this, ab);
 		// Debut de la session de reservation
 		ActionListener activité = new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				reserveur.removeReserveDoc(Livre.this);
+				bi.free(Livre.this);
 				Livre.this.retour();
 			}
 		};
 		tempsReservation = new Timer(TEMPS_RESERVATION_MAX, activité);
 		tempsReservation.setRepeats(false);
 		tempsReservation.start();
-		System.out.println("demarer");
 	}
 
 	@Override
 	public void emprunter(Client ab) throws PasLibreException {
 		if (reserveur != null) {
 			if (reserveur.equals(ab)) {
-				emprunteur = ab;
-				ab.addEmpruntDocument(this);
 				// annule le timer de reservation(client est venu l'emprunter a
 				// temps)
 				tempsReservation.stop();
 				tempsReservation = null;
+				emprunteur = ab;
+				reserveur = null;
+				bi.free(this);
+				bi.borrow(this, ab);
 			} else {
 				throw new PasLibreException();
 			}
@@ -84,17 +89,17 @@ public class Livre implements Document {
 				throw new PasLibreException();
 			else {
 				emprunteur = ab;
-				ab.addEmpruntDocument(this);
+				bi.borrow(this, ab);
 			}
 		}
-
 	}
 
 	@Override
-	public boolean retour() {
-		if (reserveur != null || emprunteur != null) {
+	public void retour() {
+		if (reserveur !=null || emprunteur !=null){
 			reserveur = null;
 			emprunteur = null;
+			bi.free(this);
 
 			for (Client a : AvertissementDispo) {
 				Mail javaEmail = new Mail();
@@ -111,37 +116,16 @@ public class Livre implements Document {
 					e.printStackTrace();
 				}
 			}
-			return true;
 		}
-		return false;
 	}
 
 	@Override
-	public String getTitre() {
-		// TODO Auto-generated method stub
-		return titre;
+	public String toString(){
+		return numero() + " " + titre ;
 	}
 
 	@Override
-	public int getNumero() {
-		// TODO Auto-generated method stub
-		return numero;
-	}
-
-	@Override
-	public String toString() {
-		return getTitre() + " " + getNumero();
-	}
-
-	@Override
-	public boolean isFree() {
-		// TODO Auto-generated method stub
-		return (emprunteur == null && reserveur == null);
-	}
-
-	@Override
-	public Client getEmprunteur() {
-		// TODO Auto-generated method stub
-		return emprunteur;
+	public int hashCode(){
+		return titre.hashCode();
 	}
 }
