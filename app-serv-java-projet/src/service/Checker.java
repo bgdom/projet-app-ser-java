@@ -60,7 +60,7 @@ public class Checker implements Service{
 			return true;
 		Calendar c1 = Calendar.getInstance(), c2 = Calendar.getInstance();
 		c2.setTimeInMillis(l+DAY_IN_MILLIS*NB_DAYS_MAX_EMPRUNT);
-		if(c1.compareTo(c2) > 0){ // if the doc is returned after the NB_DAYS_MAX_EMPRUNT
+		if(c1.compareTo(c2) < 0){ // if the doc is returned after the NB_DAYS_MAX_EMPRUNT
 			addClient(bi.getEmprunteur(d));
 			synchronized(mapDoc){ // remove the doc to the care mapping
 				mapDoc.remove(d);

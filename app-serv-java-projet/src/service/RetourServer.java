@@ -119,9 +119,9 @@ public class RetourServer extends AbstractService implements ServiceServer {
 						+ System.getProperty("line.separator") +"Entrez l'id d'un autre livre a rendre :"+ System.getProperty("line.separator"));
 				if(array.length > 1){
 					ck.addClient(holder);
-					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour la dégradation du livre du livre)"+ System.getProperty("line.separator"));
+					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour la dégradation du livre)"+ System.getProperty("line.separator"));
 				} else if (!ck.manageTime(doc))
-					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour le retard du livre du livre)"+ System.getProperty("line.separator"));
+					d.setMsg(d.getMsg()+"(Vous êtes pénalisés pour le retard du livre)"+ System.getProperty("line.separator"));
 				doc.retour();
 			} else {
 				d.setMsg(RETOUR_ACTION + "Erreur" + System.getProperty("line.separator") + doc.toString()

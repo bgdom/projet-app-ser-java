@@ -116,6 +116,7 @@ public class Livre implements Document {
 					e.printStackTrace();
 				}
 			}
+			AvertissementDispo.clear();
 		}
 	}
 
